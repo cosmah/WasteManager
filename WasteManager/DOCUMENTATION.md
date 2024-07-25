@@ -5,3 +5,4 @@ This is a react native project using expo framework
 4. Create EAS config file in the project using `eas build:configure`
 5. Run the following command to craete a development build `eas build --platform android --profile development`
 6. Start development server with `npx expo start`
+7. To reset the projet run `npm run reset-project`
