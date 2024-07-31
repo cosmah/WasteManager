@@ -1,38 +1,38 @@
-import { StatusBar } from "expo-status-bar";
 import { Redirect, Tabs } from "expo-router";
-import { Image, Text, View } from "react-native";
-import { styled } from 'nativewind';
-
-import { icons } from "../../constants";
-import { Loader } from "../../components";
+import { Image, Text, View, ImageSourcePropType } from "react-native";
+import icons from "../../constants/icons.js";
+import { styled } from "nativewind";
 
 const StyledView = styled(View);
+const StyledImage = styled(Image);
 const StyledText = styled(Text);
 
-const TabIcon = ({ icon, color, name, focused }) => {
+const TabIcon = ({ icon, color, name, focused }: {
+  icon: ImageSourcePropType,
+  color: string,
+  name: string,
+  focused: boolean,
+}) => {
   return (
-    <View className="flex items-center justify-center gap-2">
-      <Image
+    <StyledView>
+      <StyledImage
         source={icon}
         resizeMode="contain"
         tintColor={color}
         className="w-6 h-6"
       />
-      <Text
-        className={`${focused ? "font-psemibold" : "font-pregular"} text-xs`}
-        style={{ color: color }}
-      >
+      <StyledText className={`${focused ? 'font-psemibold' : 'font-pregular'} text-xs`}>
         {name}
-      </Text>
-    </View>
+      </StyledText>
+    </StyledView>
   );
-};
+};;
 
 const TabsLayout = () => {
   return (
     <>
-    <Tabs>
-      <Tabs.Screen
+      <Tabs>
+        <Tabs.Screen
           name="home"
           options={{
             title: "Home",
@@ -47,13 +47,9 @@ const TabsLayout = () => {
             ),
           }}
         />
-    </Tabs>
+      </Tabs>
     </>
-    
-   
-  )
-}
+  );
+};
 
-export default _layout
-
-const styles = StyleSheet.create({})
+export default TabsLayout;
