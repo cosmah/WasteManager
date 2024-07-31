@@ -14,7 +14,7 @@ const TabIcon = ({ icon, color, name, focused }: {
   focused: boolean,
 }) => {
   return (
-    <StyledView>
+    <StyledView className="items-center justify-center">
       <StyledImage
         source={icon}
         resizeMode="contain"
@@ -31,7 +31,15 @@ const TabIcon = ({ icon, color, name, focused }: {
 const TabsLayout = () => {
   return (
     <>
-      <Tabs>
+      <Tabs screenOptions={{
+          tabBarShowLabel: false,
+          tabBarActiveTintColor: '#ffa001',
+          tabBarInactiveTintColor: '#cdcde8',
+          tabBarStyle: {
+            backgroundColor: '#161622'
+          }
+        }}>
+          {/* Home */}
         <Tabs.Screen
           name="home"
           options={{
@@ -47,6 +55,58 @@ const TabsLayout = () => {
             ),
           }}
         />
+
+          {/* create */}
+          <Tabs.Screen
+          name="create"
+          options={{
+            title: "Create",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon={icons.plus}
+                color={color}
+                name="Create"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+
+        {/* profile */}
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: "Profile",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon={icons.profile}
+                color={color}
+                name="Profile"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+
+        {/* bookmarks */}
+        <Tabs.Screen
+          name="bookmark"
+          options={{
+            title: "Bookmark",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon={icons.bookmark}
+                color={color}
+                name="Bookmark"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+
       </Tabs>
     </>
   );
