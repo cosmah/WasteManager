@@ -14,14 +14,14 @@ const TabIcon = ({ icon, color, name, focused }: {
   focused: boolean,
 }) => {
   return (
-    <StyledView className="items-center justify-center">
+    <StyledView className="items-center justify-center gap-2">
       <StyledImage
         source={icon}
         resizeMode="contain"
         tintColor={color}
         className="w-6 h-6"
       />
-      <StyledText className={`${focused ? 'font-psemibold' : 'font-pregular'} text-xs`}>
+      <StyledText className={`${focused ? 'font-psemibold' : 'font-pregular'} text-xs`} style={{color: color}}>
         {name}
       </StyledText>
     </StyledView>
@@ -36,7 +36,10 @@ const TabsLayout = () => {
           tabBarActiveTintColor: '#ffa001',
           tabBarInactiveTintColor: '#cdcde8',
           tabBarStyle: {
-            backgroundColor: '#161622'
+            backgroundColor: '#161622',
+            borderTopWidth:1,
+            borderTopColor:'#232533',
+            height: 84,
           }
         }}>
           {/* Home */}
