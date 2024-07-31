@@ -76,23 +76,6 @@ const TabsLayout = () => {
           }}
         />
 
-        {/* profile */}
-        <Tabs.Screen
-          name="profile"
-          options={{
-            title: "Profile",
-            headerShown: false,
-            tabBarIcon: ({ color, focused }) => (
-              <TabIcon
-                icon={icons.profile}
-                color={color}
-                name="Profile"
-                focused={focused}
-              />
-            ),
-          }}
-        />
-
         {/* bookmarks */}
         <Tabs.Screen
           name="bookmark"
@@ -104,6 +87,23 @@ const TabsLayout = () => {
                 icon={icons.bookmark}
                 color={color}
                 name="Bookmark"
+                focused={focused}
+              />
+            ),
+          }}
+        />
+
+        {/* profile */}
+        <Tabs.Screen
+          name="profile"
+          options={{
+            title: "Profile",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon
+                icon={icons.profile}
+                color={color}
+                name="Profile"
                 focused={focused}
               />
             ),
