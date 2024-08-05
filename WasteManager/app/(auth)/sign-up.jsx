@@ -7,6 +7,7 @@ import { Image } from "react-native";
 import FormField from "@/components/FormField";
 import CustomButtons from "@/components/CustomButtons";
 import { Link } from "expo-router";
+import {createUser} from "@/lib/appwrite"
 
 const StyledText = styled(Text);
 const SafeAreaViewContainer = styled(SafeAreaView);
@@ -27,9 +28,7 @@ const SignUp = () => {
 
   //LOGIN FUNCTION
   const submit = () => {
-    setIsSubmitting(true);
-    // Add your login logic here
-    setIsSubmitting(false);
+    createUser();
   };
 
   return (

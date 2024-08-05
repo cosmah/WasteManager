@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.jacfrost.WasteManager"
+      "package": "com.yowastemanager.cosmah"
     },
     "web": {
       "bundler": "metro",
