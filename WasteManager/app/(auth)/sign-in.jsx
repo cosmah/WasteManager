@@ -6,11 +6,13 @@ import { images } from "../../assets/images";
 import { Image } from "react-native";
 import FormField from "@/components/FormField";
 import CustomButtons from "@/components/CustomButtons";
+import { Link } from "expo-router";
 
 const StyledText = styled(Text);
 const SafeAreaViewContainer = styled(SafeAreaView);
 const SImage = styled(Image);
 const StyledView = styled(View);
+const SLink = styled(Link);
 
 const SignIn = () => {
   //create user state field
@@ -63,6 +65,16 @@ const SignIn = () => {
           containerStyle="mt-7"
           isLoading={isSubmitting}
         />
+
+        <StyledView className="justify-center pt-5 flex-row gap-2">
+          <StyledText className="text-lg text-gray-100 font-pregular">
+            Don't have account ?
+          </StyledText>
+          <SLink href="/sign-up" className="text-lg 
+          font-psemibold text-secondary">Sign Up</SLink>
+        </StyledView>
+
+
         </StyledView>
         
       </ScrollView>
