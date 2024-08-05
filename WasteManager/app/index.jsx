@@ -3,6 +3,7 @@ import { Text, View, Image, StatusBar } from "react-native";
 import { styled } from "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView } from "react-native";
+import { Redirect, router } from "expo-router";
 
 import { images } from "../assets/images"; // Correct path to the image file
 import CustomButtons from "@/components/CustomButtons";
@@ -16,7 +17,7 @@ export default function App() {
   return (
     <StyledSafeAreaView className="bg-primary h-full">
       <ScrollView contentContainerStyle={{ height: "100%" }}>
-        <StyledView className="w-full justify-start items-center h-full px-4">
+        <StyledView className="w-full justify-start items-center min-h-[85vh] px-4">
           <SImage
             source={images.logo}
             className="w-[130px] h-[84px]"
@@ -39,18 +40,19 @@ export default function App() {
             </StyledText>
           </StyledView>
           <StyledText className="text-sm font-pregular text-gray-100 mt-7 text-center">
-            Use, Recycle, Go Green: Yo Waste Manager is a platform that helps connect with 
-            reliable waster managing companies to help you recycle your waste and keep the environment clean.
+            Use, Recycle, Go Green: Yo Waste Manager is a platform that helps
+            connect with reliable waster managing companies to help you recycle
+            your waste and keep the environment clean.
           </StyledText>
 
-          <CustomButtons  
+          <CustomButtons
             title="Get Started"
-            handlePress={() => {}}
+            handlePress={() => router.push('/sign-in')}
             containerStyle="w-full mt-7"
           />
         </StyledView>
       </ScrollView>
-      <StatusBar backgroundColor='#161622' barStyle='light' />
+      <StatusBar backgroundColor="#161622" barStyle="light" />
     </StyledSafeAreaView>
   );
 }
