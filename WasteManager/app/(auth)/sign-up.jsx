@@ -14,9 +14,10 @@ const SImage = styled(Image);
 const StyledView = styled(View);
 const SLink = styled(Link);
 
-const SignIn = () => {
+const SignUp = () => {
   //create user state field
   const [form, setForm] = useState({
+    username: "",
     email: "",
     password: "",
   });
@@ -42,8 +43,16 @@ const SignIn = () => {
           />
 
           <StyledText className="text-2xl text-white text-semibold mt-10 fon-psemibold">
-            Log in to YoWaste Manager
+            Sign Up to YoWaste Manager
           </StyledText>
+
+          <FormField 
+            title="Username" 
+            value={form.username} 
+            handleChangeText={(e) => setForm({...form, username: e})}
+            otherStyles="mt-7"
+            keyboardType="email-address"
+          />
 
           <FormField 
             title="Email Address" 
@@ -68,10 +77,10 @@ const SignIn = () => {
 
         <StyledView className="justify-center pt-5 flex-row gap-2">
           <StyledText className="text-lg text-gray-100 font-pregular">
-            Don't have account ?
+            Have an account already ?
           </StyledText>
-          <SLink href="/sign-up" className="text-lg 
-          font-psemibold text-secondary">Sign Up</SLink>
+          <SLink href="/sign-in" className="text-lg 
+          font-psemibold text-secondary">Sign In</SLink>
         </StyledView>
 
 
@@ -82,4 +91,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default SignUp;
