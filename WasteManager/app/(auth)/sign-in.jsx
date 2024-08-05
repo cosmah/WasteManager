@@ -57,13 +57,14 @@ const SignIn = () => {
             otherStyles="mt-7"
             keyboardType="password"
           />
-        </StyledView>
-        <CustomButtons
+          <CustomButtons
           title="Sign In"
           handlePress={submit}
           containerStyle="mt-7"
           isLoading={isSubmitting}
         />
+        </StyledView>
+        
       </ScrollView>
     </SafeAreaViewContainer>
   );
