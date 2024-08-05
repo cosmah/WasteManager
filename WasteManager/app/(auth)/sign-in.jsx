@@ -46,14 +46,14 @@ const SignIn = () => {
           <FormField 
             title="Email Address" 
             value={form.email} 
-            handlerChangeText={(e) => setForm({...form, email: e})}
+            handleChangeText={(e) => setForm({...form, email: e})}
             otherStyles="mt-7"
             keyboardType="email-address"
           />
           <FormField 
             title="Password" 
             value={form.password} 
-            handlerChangeText={(e) => setForm({...form, password: e})}
+            handleChangeText={(e) => setForm({...form, password: e})}
             otherStyles="mt-7"
             keyboardType="password"
           />
