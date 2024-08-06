@@ -36,12 +36,14 @@ const SignUp = () => {
     setIsSubmitting(true);
 
     try {
-      console.log("Form data before submission:", form); // Log form data
+      // Log only the relevant fields
+      console.log("Form data before submission:", {
+        username: form.username,
+        email: form.email,
+        password: form.password,
+      });
 
       const result = await createUser(form.email, form.password, form.username);
-
-      // Set it to global state...
-
       router.replace("/home");
     } catch (error) {
       Alert.alert("Error", error.message);
@@ -67,7 +69,7 @@ const SignUp = () => {
           <FormField
             title="Username"
             value={form.username}
-            handleChangeText={(e) => setForm({ ...form, username: e })}
+            handleChangeText={(text) => setForm({ ...form, username: text })}
             otherStyles="mt-7"
             keyboardType="email-address"
           />
@@ -75,14 +77,14 @@ const SignUp = () => {
           <FormField
             title="Email Address"
             value={form.email}
-            handleChangeText={(e) => setForm({ ...form, email: e })}
+            handleChangeText={(text) => setForm({ ...form, email: text })}
             otherStyles="mt-7"
             keyboardType="email-address"
           />
           <FormField
             title="Password"
             value={form.password}
-            handleChangeText={(e) => setForm({ ...form, password: e })}
+            handleChangeText={(text) => setForm({ ...form, password: text })}
             otherStyles="mt-7"
             keyboardType="password"
           />
