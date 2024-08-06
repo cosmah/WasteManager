@@ -36,14 +36,17 @@ const SignUp = () => {
     setIsSubmitting(true);
 
     try {
+      // Trim email to remove any leading or trailing whitespace
+      const trimmedEmail = form.email.trim();
+
       // Log only the relevant fields
       console.log("Form data before submission:", {
         username: form.username,
-        email: form.email,
+        email: trimmedEmail,
         password: form.password,
       });
 
-      const result = await createUser(form.email, form.password, form.username);
+      const result = await createUser(trimmedEmail, form.password, form.username);
       router.replace("/home");
     } catch (error) {
       Alert.alert("Error", error.message);
@@ -71,7 +74,7 @@ const SignUp = () => {
             value={form.username}
             handleChangeText={(text) => setForm({ ...form, username: text })}
             otherStyles="mt-7"
-            keyboardType="email-address"
+            keyboardType="default"
           />
 
           <FormField
@@ -86,7 +89,8 @@ const SignUp = () => {
             value={form.password}
             handleChangeText={(text) => setForm({ ...form, password: text })}
             otherStyles="mt-7"
-            keyboardType="password"
+            keyboardType="default"
+            secureTextEntry={true}
           />
           <CustomButtons
             title="Sign Up"

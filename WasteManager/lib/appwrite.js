@@ -29,10 +29,13 @@ export const createUser = async (email, password, username) => {
 
     if (!newAccount) throw new Error("Account creation failed");
 
+    // Generate avatar URL
     const avatarUrl = avatars.getInitials(username);
 
+    // Sign in the user
     await signIn(email, password);
 
+    // Create user document in the database
     const newUser = await databases.createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
@@ -41,7 +44,7 @@ export const createUser = async (email, password, username) => {
         accountId: newAccount.$id,
         email,
         username,
-        avatars: avatarUrl,
+        avatar: avatarUrl.href, // Ensure to use href to get the URL
       }
     );
 
@@ -54,7 +57,7 @@ export const createUser = async (email, password, username) => {
 
 export async function signIn(email, password) {
   try {
-    const session = await account.createEmailSession(email, password);
+    const session = await account.createEmailPasswordSession(email, password);
     return session;
   } catch (error) {
     throw new Error(error.message);
