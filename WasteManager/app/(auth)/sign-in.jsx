@@ -28,16 +28,15 @@ const SignIn = () => {
   const submit = async () => {
     if (!form.email || !form.password) {
       Alert.alert("Error", "Please fill all the fields");
+      return;
     }
-
+  
+    if (isSubmitting) return; // Prevent duplicate submissions
+  
     setIsSubmitting(true);
-
+  
     try {
-      // Trim email to remove any leading or trailing whitespace
       const trimmedEmail = form.email.trim();
-
-    
-
       const result = await signIn(trimmedEmail, form.password);
       router.replace("/home");
     } catch (error) {
@@ -46,6 +45,7 @@ const SignIn = () => {
       setIsSubmitting(false);
     }
   };
+  
 
   return (
     <SafeAreaViewContainer className="bg-primary h-full">
