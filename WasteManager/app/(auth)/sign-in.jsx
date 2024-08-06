@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView,Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styled } from "nativewind";
 import { images } from "../../assets/images";
@@ -7,6 +7,7 @@ import { Image } from "react-native";
 import FormField from "@/components/FormField";
 import CustomButtons from "@/components/CustomButtons";
 import { Link } from "expo-router";
+import { signIn } from "@/lib/appwrite";
 
 const StyledText = styled(Text);
 const SafeAreaViewContainer = styled(SafeAreaView);
@@ -24,11 +25,26 @@ const SignIn = () => {
   //loading state
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  //LOGIN FUNCTION
-  const submit = () => {
+  const submit = async () => {
+    if (!form.email || !form.password) {
+      Alert.alert("Error", "Please fill all the fields");
+    }
+
     setIsSubmitting(true);
-    // Add your login logic here
-    setIsSubmitting(false);
+
+    try {
+      // Trim email to remove any leading or trailing whitespace
+      const trimmedEmail = form.email.trim();
+
+    
+
+      const result = await signIn(trimmedEmail, form.password);
+      router.replace("/home");
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
