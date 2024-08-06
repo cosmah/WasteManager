@@ -1,4 +1,5 @@
-import { Client, Account, ID } from "react-native-appwrite";
+import { Client, Account, ID, Avatars, Databases } from "react-native-appwrite";
+
 export const appwriteConfig = {
   endpoint: "https://cloud.appwrite.io/v1",
   platform: "com.yowastemanager.cosmah",
@@ -18,15 +19,44 @@ client
   .setPlatform(appwriteConfig.platform); // Your application ID or bundle ID.
 
 const account = new Account(client);
+const avatars = new Avatars(client);
+const databases = new Databases(client);
 
-export const createUser = () => {
-  // Register User
-  account.create(ID.unique(), "me@example.com", "password", "Jane Doe").then(
-    function (response) {
-      console.log(response);
-    },
-    function (error) {
-      console.log(error);
-    }
-  );
+export const createUser = async (email, password, username) => {
+  try {
+    // Register User
+    const newAccount = await account.create(ID.unique(), email, password, username);
+
+    if (!newAccount) throw new Error("Account creation failed");
+
+    const avatarUrl = avatars.getInitials(username);
+
+    await signIn(email, password);
+
+    const newUser = await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.userCollectionId,
+      ID.unique(),
+      {
+        accountId: newAccount.$id,
+        email,
+        username,
+        avatars: avatarUrl,
+      }
+    );
+
+    return newUser;
+  } catch (error) {
+    console.log(error);
+    throw new Error(error.message);
+  }
 };
+
+export async function signIn(email, password) {
+  try {
+    const session = await account.createEmailPasswordSession(email, password);
+    return session;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
