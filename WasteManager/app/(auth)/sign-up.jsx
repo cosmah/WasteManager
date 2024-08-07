@@ -7,7 +7,7 @@ import { Image } from "react-native";
 import FormField from "@/components/FormField";
 import CustomButtons from "@/components/CustomButtons";
 import { Link, router } from "expo-router";
-import { createUser } from "@/lib/appwrite";
+import { createUser, logout } from "@/lib/appwrite";
 
 const StyledText = styled(Text);
 const SafeAreaViewContainer = styled(SafeAreaView);
@@ -33,6 +33,8 @@ const SignUp = () => {
       return;
     }
 
+    if (isSubmitting) return;
+
     setIsSubmitting(true);
 
     try {
@@ -45,6 +47,9 @@ const SignUp = () => {
         email: trimmedEmail,
         password: form.password,
       });
+
+      // Logout any existing session
+      await logout();
 
       const result = await createUser(trimmedEmail, form.password, form.username);
       router.replace("/home");

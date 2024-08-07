@@ -10,13 +10,12 @@ export const appwriteConfig = {
   storageId: "66b12ec900382dffbc76",
 };
 
-// Init your React Native SDK
 const client = new Client();
 
 client
-  .setEndpoint(appwriteConfig.endpoint) // Your Appwrite Endpoint
-  .setProject(appwriteConfig.projectId) // Your project ID
-  .setPlatform(appwriteConfig.platform); // Your application ID or bundle ID.
+  .setEndpoint(appwriteConfig.endpoint)
+  .setProject(appwriteConfig.projectId)
+  .setPlatform(appwriteConfig.platform);
 
 const account = new Account(client);
 const avatars = new Avatars(client);
@@ -24,18 +23,14 @@ const databases = new Databases(client);
 
 export const createUser = async (email, password, username) => {
   try {
-    // Register User
     const newAccount = await account.create(ID.unique(), email, password, username);
 
     if (!newAccount) throw new Error("Account creation failed");
 
-    // Generate avatar URL
     const avatarUrl = avatars.getInitials(username);
 
-    // Sign in the user
     await signIn(email, password);
 
-    // Create user document in the database
     const newUser = await databases.createDocument(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
@@ -44,7 +39,7 @@ export const createUser = async (email, password, username) => {
         accountId: newAccount.$id,
         email,
         username,
-        avatar: avatarUrl.href, // Ensure to use href to get the URL
+        avatar: avatarUrl.href,
       }
     );
 
@@ -55,11 +50,19 @@ export const createUser = async (email, password, username) => {
   }
 };
 
-export async function signIn(email, password) {
+export const signIn = async (email, password) => {
   try {
     const session = await account.createEmailPasswordSession(email, password);
     return session;
   } catch (error) {
     throw new Error(error.message);
   }
-}
+};
+
+export const logout = async () => {
+  try {
+    await account.deleteSession('current');
+  } catch (error) {
+    console.log('No active session to delete');
+  }
+};
