@@ -1,7 +1,8 @@
-import { StyleSheet, Text, View } from 'react-native'
 import { Slot, SplashScreen, Stack } from 'expo-router'
 import { useFonts } from 'expo-font'
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
+
+import GlobalProvider from '../context/GlobalProvider'
 
 //Managin splasscreen, prevent splash screen from auto hiding befoe assests load
 SplashScreen.preventAutoHideAsync();
@@ -29,12 +30,18 @@ const RootLayout = () => {
     if(!fontsLoaded && !error) return null;
 
   return (
-    <Stack>
+
+    <GlobalProvider>
+      <Stack>
         <Stack.Screen name='index' options={{headerShown: false}}/>
         <Stack.Screen name='(auth)' options={{headerShown: false}}/>
         <Stack.Screen name='(tabs)' options={{headerShown: false}}/>
         <Stack.Screen name='search/[query]' options={{headerShown: false}}/>
     </Stack>
+    </GlobalProvider>
+
+
+    
   ) 
 }
 
