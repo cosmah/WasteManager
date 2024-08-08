@@ -39,7 +39,7 @@ const SignIn = () => {
       // Logout any existing session
       await logout();
       
-      const result = await signIn(trimmedEmail, form.password);
+      await signIn(trimmedEmail, form.password);
       router.replace("/home");
     } catch (error) {
       Alert.alert("Error", error.message);
