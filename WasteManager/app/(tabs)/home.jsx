@@ -2,6 +2,7 @@ import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styled } from "nativewind";
+import {SearchInput} from "@/components/SearchInput";
 
 import { images } from "../../assets/images";
 
@@ -26,12 +27,15 @@ const home = () => {
                 <StyledText className="font-pmedium text-sm text-gray-100">Welcome back</StyledText>
                 <StyledText className="text-2xl font-psemibold text-white">YoWaste Manager</StyledText>
               </StyledView>
-              <StyledImage
-                source={images.logo}
-                className="w-20 h-18 mt-0"
-                resizeMode="contain"
-              />
+              {/* <StyledView>
+                <StyledImage
+                  source={images.logo}
+                  className="w-20 h-18 mt-0"
+                  resizeMode="contain"
+                />
+              </StyledView> */}
             </StyledView>
+            <SearchInput />
           </StyledView>
         )}
       />
