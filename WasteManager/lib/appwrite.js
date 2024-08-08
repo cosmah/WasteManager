@@ -67,25 +67,24 @@ export const logout = async () => {
   }
 };
 
+// Get Current User
+export async function getCurrentUser() {
+  try {
+    const currentAccount = await account.get(); // Corrected from getAccount() to account.get()
 
-export const getCurrentUser = async() => {
-  try{
-    const currentAccount = await account.get();
-
-    if(!currentAccount) throw new Error;
+    if (!currentAccount) throw new Error("Failed to fetch account");
 
     const currentUser = await databases.listDocuments(
       appwriteConfig.databaseId,
       appwriteConfig.userCollectionId,
-      [Query.equal('accountId', currentAccount.$id)]
-    )
+      [Query.equal("accountId", currentAccount.$id)]
+    );
 
-    if(!currentUser) throw Error;
+    if (!currentUser.documents.length) throw new Error("User not found");
 
     return currentUser.documents[0];
-
-
-  }catch(error){
+  } catch (error) {
     console.log(error);
+    return null;
   }
 }
