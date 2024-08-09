@@ -10,7 +10,7 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styled } from "nativewind";
 import { getCurrentUser } from "@/lib/appwrite";
-import * as Location from 'expo-location';
+import * as Location from "expo-location";
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -37,8 +37,8 @@ const Home = () => {
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
         return;
       }
 
@@ -47,7 +47,7 @@ const Home = () => {
     })();
   }, []);
 
-  let locationText = 'Loading...';
+  let locationText = "Loading...";
   if (errorMsg) {
     locationText = errorMsg;
   } else if (location) {
@@ -56,16 +56,22 @@ const Home = () => {
 
   return (
     <StyledSafeAreaView className="bg-primary h-full ">
-      <StyledView className="flex-row justify-between items-center mb-6 p-5">
-        <StyledView>
-          <StyledText className="text-2xl font-psemibold text-secondary">
-            Hi, {username ? `${username}` : "Loading..."}
-          </StyledText>
-          <StyledText className="text-sm text-gray-100">
-            {locationText}
-          </StyledText>
-        </StyledView>
-      </StyledView>
+      <StyledView style={{ flex: 1 }}>
+  <StyledView className="flex-row justify-between items-center mb-6 p-5">
+    <StyledView>
+      <StyledText className="text-2xl font-psemibold text-secondary">
+        Hi, {username ? `${username}` : "Loading..."}
+      </StyledText>
+      <StyledText className="text-sm text-gray-100">
+        {locationText}
+      </StyledText>
+    </StyledView>
+  </StyledView>
+
+  <StyledView style={{ backgroundColor: "#7A7777", flex: 1 }} className="rounded-xl">
+    <StyledText className="p-5 text-2xl font-psemibold">Quick statistics</StyledText>
+  </StyledView>
+</StyledView>
     </StyledSafeAreaView>
   );
 };
