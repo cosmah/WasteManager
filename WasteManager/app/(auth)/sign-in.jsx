@@ -7,7 +7,8 @@ import { Image } from "react-native";
 import FormField from "@/components/FormField";
 import CustomButtons from "@/components/CustomButtons";
 import { Link, router } from "expo-router";
-import { signIn, logout } from "@/lib/appwrite";
+import { signIn, logout, getCurrentUser } from "@/lib/appwrite";
+import { useGlobalContext } from "@/context/GlobalProvider";
 
 const StyledText = styled(Text);
 const SafeAreaViewContainer = styled(SafeAreaView);
@@ -16,6 +17,8 @@ const StyledView = styled(View);
 const SLink = styled(Link);
 
 const SignIn = () => {
+
+  const { setUser, setIsLogged } = useGlobalContext();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -24,12 +27,10 @@ const SignIn = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const submit = async () => {
-    if (!form.email || !form.password) {
+    if (form.email === "" || form.password ==="") {
       Alert.alert("Error", "Please fill all the fields");
-      return;
     }
 
-    if (isSubmitting) return;
 
     setIsSubmitting(true);
 
@@ -37,9 +38,14 @@ const SignIn = () => {
       const trimmedEmail = form.email.trim();
       
       // Logout any existing session
-      await logout();
+      // await logout();
       
       await signIn(trimmedEmail, form.password);
+      const result = await getCurrentUser();
+      setUser(result);
+      setIsLoggedIn(true);
+
+      Alert.alert("Success", "Logged in successfully");
       router.replace("/home");
     } catch (error) {
       Alert.alert("Error", error.message);

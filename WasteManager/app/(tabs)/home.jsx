@@ -2,7 +2,7 @@ import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styled } from "nativewind";
-import {SearchInput} from "@/components/SearchInput";
+
 
 import { images } from "../../assets/images";
 
@@ -35,7 +35,7 @@ const home = () => {
                 />
               </StyledView> */}
             </StyledView>
-            <SearchInput />
+            
           </StyledView>
         )}
       />
