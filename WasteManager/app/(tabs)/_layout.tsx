@@ -1,17 +1,41 @@
-import { Redirect, Tabs } from "expo-router";
+import { Tabs } from "expo-router";
 import { Image, Text, View, ImageSourcePropType } from "react-native";
 import icons from "../../constants/icons.js";
 import { styled } from "nativewind";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 const StyledView = styled(View);
 const StyledImage = styled(Image);
 const StyledText = styled(Text);
 
-const TabIcon = ({ icon, color, name, focused }: {
-  icon: ImageSourcePropType,
-  color: string,
-  name: string,
-  focused: boolean,
+const TabIcons = ({
+  icon,
+  color,
+  name,
+  focused,
+}: {
+  icon: string;
+  color: string;
+  name: string;
+  focused: boolean;
+}) => {
+  return (
+    <View style={{ alignItems: "center" }}>
+      <Ionicons name={icon} size={30} color={focused ? color : "#cdcde8"} />
+      <Text style={{ color: focused ? color : "#cdcde8" }}>{name}</Text>
+    </View>
+  );
+};
+const TabIcon = ({
+  icon,
+  color,
+  name,
+  focused,
+}: {
+  icon: ImageSourcePropType;
+  color: string;
+  name: string;
+  focused: boolean;
 }) => {
   return (
     <StyledView className="items-center justify-center gap-2">
@@ -21,28 +45,33 @@ const TabIcon = ({ icon, color, name, focused }: {
         tintColor={color}
         className="w-6 h-6"
       />
-      <StyledText className={`${focused ? 'font-psemibold' : 'font-pregular'} text-xs`} style={{color: color}}>
+      <StyledText
+        className={`${focused ? "font-psemibold" : "font-pregular"} text-xs`}
+        style={{ color: color }}
+      >
         {name}
       </StyledText>
     </StyledView>
   );
-};;
+};
 
 const TabsLayout = () => {
   return (
     <>
-      <Tabs screenOptions={{
+      <Tabs
+        screenOptions={{
           tabBarShowLabel: false,
-          tabBarActiveTintColor: '#00ab41',
-          tabBarInactiveTintColor: '#cdcde8',
+          tabBarActiveTintColor: "#00ab41",
+          tabBarInactiveTintColor: "#cdcde8",
           tabBarStyle: {
-            backgroundColor: '#161622',
-            borderTopWidth:1,
-            borderTopColor:'#232533',
+            backgroundColor: "#161622",
+            borderTopWidth: 1,
+            borderTopColor: "#232533",
             height: 84,
-          }
-        }}>
-          {/* Home */}
+          },
+        }}
+      >
+        {/* Home */}
         <Tabs.Screen
           name="home"
           options={{
@@ -59,41 +88,40 @@ const TabsLayout = () => {
           }}
         />
 
-          {/* create */}
-          <Tabs.Screen
+        {/* Create */}
+        <Tabs.Screen
           name="create"
           options={{
-            title: "Create",
+            title: "Notifications",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
-              <TabIcon
-                icon={icons.plus}
+              <TabIcons
+                icon="notifications" // Ionicons name for bell icon
                 color={color}
-                name="Create"
+                name="Notifications"
                 focused={focused}
               />
             ),
           }}
         />
-
-        {/* bookmarks */}
+        {/* Bookmarks */}
         <Tabs.Screen
           name="bookmark"
           options={{
-            title: "Bookmark",
+            title: "Schedules",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
                 icon={icons.bookmark}
                 color={color}
-                name="Bookmark"
+                name="Schedules"
                 focused={focused}
               />
             ),
           }}
         />
 
-        {/* profile */}
+        {/* Profile */}
         <Tabs.Screen
           name="profile"
           options={{
@@ -109,7 +137,6 @@ const TabsLayout = () => {
             ),
           }}
         />
-
       </Tabs>
     </>
   );
