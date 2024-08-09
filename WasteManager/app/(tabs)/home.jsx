@@ -3,20 +3,21 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styled } from "nativewind";
 import { getCurrentUser } from "@/lib/appwrite";
+import profileIcon from "../../assets/icons/profile.png";
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
 const StyledSafeAreaView = styled(SafeAreaView);
 const StyledImage = styled(Image);
 
-const home = () => {
-  const [username, setusername] = useState("");
+const Home = () => {
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
     const fetchUser = async () => {
       const user = await getCurrentUser();
       if (user) {
-        setusername(user.username);
+        setUsername(user.username);
       }
     };
 
@@ -24,30 +25,20 @@ const home = () => {
   }, []);
 
   return (
-    <StyledSafeAreaView className="bg-primary">
-      <FlatList
-        data={[{ id: 1 }, { id: 2 }, { id: 3 }]}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <StyledText className="text-3xl text-white">{item.id}</StyledText>
-        )}
-        ListHeaderComponent={() => (
-          <StyledView className="my-6 px-4 space-y-6">
-            <StyledView className="flex-row justify-between items-start mb-6">
-              <StyledView>
-                <StyledText className="font-pmedium text-sm text-gray-100">
-                  Welcome back
-                </StyledText>
-                <StyledText className="text-2xl font-psemibold text-white">
-                  {username ? `${username}` : "Loading..."}
-                </StyledText>
-              </StyledView>
-            </StyledView>
-          </StyledView>
-        )}
-      />
+    <StyledSafeAreaView className="bg-primary h-full">
+      <StyledView className="flex-row justify-between items-center mb-6">
+        <StyledView>
+          <StyledText className="font-pmedium text-sm text-gray-100">
+            Welcome back
+          </StyledText>
+          <StyledText className="text-2xl font-psemibold text-secondary">
+            {username ? `${username}` : "Loading..."}
+          </StyledText>
+        </StyledView>
+        <StyledImage source={profileIcon} className="w-10 h-10" />
+      </StyledView>
     </StyledSafeAreaView>
   );
 };
 
-export default home;
+export default Home;
