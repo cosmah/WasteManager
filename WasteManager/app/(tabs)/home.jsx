@@ -74,7 +74,7 @@ const Home = () => {
           className="rounded-xl"
         >
           <StyledText className="p-5 text-2xl font-psemibold">
-            Quick statistics
+            Your statistics
           </StyledText>
           <StyledView className="flex-row justify-around mt-5">
             <StyledView className="items-center">
