@@ -49,6 +49,15 @@ const Profile = () => {
             </StyledText>
           </StyledView>
         </StyledView>
+
+        <StyledView
+          style={{ backgroundColor: "#7A7777", flex: 1 }}
+          className="rounded-xl"
+        >
+          <StyledView className="flex-row justify-around mt-5">
+            
+          </StyledView>
+        </StyledView>
       </StyledView>
     </StyledSafeAreaView>
   );
