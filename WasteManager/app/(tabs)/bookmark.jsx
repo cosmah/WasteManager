@@ -1,9 +1,18 @@
-import { StyleSheet, Text, View, Image, TextInput, Alert, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  TextInput,
+  Alert,
+  ScrollView,
+} from "react-native";
 import React, { useState } from "react";
 import { getCurrentUser } from "@/lib/appwrite"; // Assuming appwrite.js is in the same directory
 import { styled } from "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Picker } from "@react-native-picker/picker";
+import DateTimePicker from "@react-native-community/datetimepicker";
 
 import CustomButtons from "@/components/CustomButtons";
 
@@ -16,14 +25,31 @@ const StyledPicker = styled(Picker);
 const StyledScrollView = styled(ScrollView);
 
 const Bookmark = () => {
+  const [time, setTime] = useState(new Date());
+  const [date, setDate] = useState(new Date());
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [serviceType, setServiceType] = useState("");
   const [serviceFrequency, setServiceFrequency] = useState("");
-  const [preferredDate, setPreferredDate] = useState("");
-  const [preferredTime, setPreferredTime] = useState("");
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
+
+  const onChangeDate = (event, selectedDate) => {
+    setShowDatePicker(false); // Close the date picker after selection
+    if (selectedDate) {
+      setDate(selectedDate);
+    }
+  };
+
+  const onChangeTime = (event, selectedTime) => {
+    setShowTimePicker(false); // Close the time picker after selection
+    if (selectedTime) {
+      setTime(selectedTime);
+    }
+  };
+
   const [wasteType, setWasteType] = useState("");
   const [wasteVolume, setWasteVolume] = useState("");
   const [specialHandling, setSpecialHandling] = useState("");
@@ -87,9 +113,18 @@ const Bookmark = () => {
                 style={styles.picker}
               >
                 <Picker.Item label="Select Service Type" value="" />
-                <Picker.Item label="Regular Waste Pickup" value="regular_pickup" />
-                <Picker.Item label="Bulk Item Collection" value="bulk_collection" />
-                <Picker.Item label="Hazardous Waste Disposal" value="hazardous_disposal" />
+                <Picker.Item
+                  label="Regular Waste Pickup"
+                  value="regular_pickup"
+                />
+                <Picker.Item
+                  label="Bulk Item Collection"
+                  value="bulk_collection"
+                />
+                <Picker.Item
+                  label="Hazardous Waste Disposal"
+                  value="hazardous_disposal"
+                />
                 <Picker.Item label="Recycling Services" value="recycling" />
               </StyledPicker>
             </StyledView>
@@ -107,23 +142,34 @@ const Bookmark = () => {
               </StyledPicker>
             </StyledView>
             <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
-              <STextInput
-                className="flex-1"
-                placeholder="Preferred Date"
-                value={preferredDate}
-                onChangeText={setPreferredDate}
-                style={styles.input}
-              />
+              <StyledText className="text-gray-500" onPress={() => setShowDatePicker(true)}>
+                Select Date: {date.toDateString()}
+              </StyledText>
+              {showDatePicker && (
+                <DateTimePicker
+                  testID="dateTimePicker"
+                  value={date}
+                  mode={"date"}
+                  display="default"
+                  onChange={onChangeDate}
+                />
+              )}
             </StyledView>
             <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
-              <STextInput
-                className="flex-1"
-                placeholder="Preferred Time"
-                value={preferredTime}
-                onChangeText={setPreferredTime}
-                style={styles.input}
-              />
+              <StyledText className="text-gray-500"  onPress={() => setShowTimePicker(true)}>
+                Select Time: {time.toLocaleTimeString()}
+              </StyledText>
+              {showTimePicker && (
+                <DateTimePicker
+                  testID="timePicker"
+                  value={time}
+                  mode={"time"}
+                  display="default"
+                  onChange={onChangeTime}
+                />
+              )}
             </StyledView>
+         
             <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
               <STextInput
                 className="flex-1"
@@ -198,15 +244,16 @@ const styles = StyleSheet.create({
   },
 
   buttonContainer: {
-    alignSelf: 'center', // Center the button horizontally
+    alignSelf: "center", // Center the button horizontally
     marginBottom: 10, // Adjust margin as needed
   },
   input: {
     height: 40,
     paddingLeft: 10,
+    color:"gray"
   },
   picker: {
     flex: 1,
-    color: "black",
+    color: "gray",
   },
 });
