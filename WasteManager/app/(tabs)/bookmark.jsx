@@ -142,7 +142,10 @@ const Bookmark = () => {
               </StyledPicker>
             </StyledView>
             <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
-              <StyledText className="text-gray-500" onPress={() => setShowDatePicker(true)}>
+              <StyledText
+                className="text-gray-500"
+                onPress={() => setShowDatePicker(true)}
+              >
                 Select Date: {date.toDateString()}
               </StyledText>
               {showDatePicker && (
@@ -156,7 +159,10 @@ const Bookmark = () => {
               )}
             </StyledView>
             <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
-              <StyledText className="text-gray-500"  onPress={() => setShowTimePicker(true)}>
+              <StyledText
+                className="text-gray-500"
+                onPress={() => setShowTimePicker(true)}
+              >
                 Select Time: {time.toLocaleTimeString()}
               </StyledText>
               {showTimePicker && (
@@ -169,43 +175,34 @@ const Bookmark = () => {
                 />
               )}
             </StyledView>
-         
+
             <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
-              <STextInput
-                className="flex-1"
-                placeholder="Waste Type"
-                value={wasteType}
-                onChangeText={setWasteType}
-                style={styles.input}
-              />
+              <StyledPicker
+                selectedValue={wasteType}
+                onValueChange={(itemValue) => setWasteType(itemValue)}
+                style={styles.picker}
+              >
+                <Picker.Item label="Select the waste type" value="" />
+                <Picker.Item label="Organic Waste" value="organic" />
+                <Picker.Item label="Synthetic Waste" value="synthetic" />
+              </StyledPicker>
             </StyledView>
             <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
               <STextInput
                 className="flex-1"
                 placeholder="Waste Volume"
                 value={wasteVolume}
-                onChangeText={setWasteVolume}
+                onChangeText={(text) => {
+                  // Validate if the input is a float or integer
+                  const floatRegex = /^-?\d*\.?\d*$/;
+                  if (floatRegex.test(text) || text === "") {
+                    setWasteVolume(text);
+                  }
+                }}
                 style={styles.input}
               />
             </StyledView>
-            <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
-              <STextInput
-                className="flex-1"
-                placeholder="Special Handling"
-                value={specialHandling}
-                onChangeText={setSpecialHandling}
-                style={styles.input}
-              />
-            </StyledView>
-            <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
-              <STextInput
-                className="flex-1"
-                placeholder="Access Information"
-                value={accessInfo}
-                onChangeText={setAccessInfo}
-                style={styles.input}
-              />
-            </StyledView>
+
             <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
               <STextInput
                 className="flex-1"
@@ -250,7 +247,7 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     paddingLeft: 10,
-    color:"gray"
+    color: "gray",
   },
   picker: {
     flex: 1,
