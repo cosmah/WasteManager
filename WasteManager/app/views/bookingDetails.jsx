@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from "rea
 import { useRoute } from "@react-navigation/native";
 import { styled } from "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+import { getCurrentUser, fetchBookings } from "@/lib/appwrite"; 
 
 const StyledSafeAreaView = styled(SafeAreaView);
 const StyledView = styled(View);
@@ -21,10 +21,9 @@ const BookingDetails = () => {
     <StyledSafeAreaView className="bg-primary h-full" style={styles.container}>
       <View style={styles.container}>
       <Text style={styles.title}>Booking Details</Text>
-      <Text style={styles.detailText}>Service Type: {booking.serviceType}</Text>
-      <Text style={styles.detailText}>Date: {new Date(booking.pickupDate).toLocaleDateString()}</Text>
-      <Text style={styles.detailText}>Time: {new Date(booking.pickupTime).toLocaleTimeString()}</Text>
-      <Text style={styles.detailText}>Waste Volume: {booking.wasteVolume}</Text>
+      <StyledText style={styles.bookingText}>Service Type: {booking.serviceType}</StyledText>
+                  <StyledText style={styles.bookingText}>Date: {new Date(booking.pickupDate).toLocaleDateString()}</StyledText>
+                  <StyledText style={styles.bookingText}>Time: {new Date(booking.pickupTime).toLocaleTimeString()}</StyledText>
       {/* Add more details as necessary */}
     </View>
     </StyledSafeAreaView>
