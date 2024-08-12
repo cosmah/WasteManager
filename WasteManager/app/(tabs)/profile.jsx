@@ -33,11 +33,17 @@ const Profile = () => {
     fetchUserAndBookings();
   }, []);
 
+  if (!user) {
+    return <Text>Loading...</Text>;
+  }
+
   return (
     <StyledSafeAreaView className="bg-primary h-full" style={styles.container}>
       <StyledView style={{ flex: 1 }}>
         <StyledView className="flex-row items-center mb-6 p-5" style={styles.profileContainer}>
-          <StyledImage className="" source={{ uri: user.avatar }} style={styles.avatar} />
+          {user.avatar && (
+            <StyledImage className="" source={{ uri: user.avatar }} style={styles.avatar} />
+          )}
           <StyledView style={styles.infoContainer}>
             <StyledText
               className="text-2xl font-psemibold text-secondary"
