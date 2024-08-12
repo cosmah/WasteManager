@@ -4,10 +4,10 @@ import React, { useEffect } from 'react';
 
 import GlobalProvider from '../context/GlobalProvider'
 
-//Managin splasscreen, prevent splash screen from auto hiding befoe assests load
+// Managing splash screen, prevent splash screen from auto hiding before assets load
 SplashScreen.preventAutoHideAsync();
 
-//load fonts
+// Load fonts
 const RootLayout = () => {
     const [fontsLoaded, error] = useFonts({
         "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
@@ -30,20 +30,16 @@ const RootLayout = () => {
     if(!fontsLoaded && !error) return null;
 
   return (
-
     <GlobalProvider>
       <Stack>
         <Stack.Screen name='index' options={{headerShown: false}}/>
         <Stack.Screen name='(auth)' options={{headerShown: false}}/>
         <Stack.Screen name='(tabs)' options={{headerShown: false}}/>
         <Stack.Screen name='search/[query]' options={{headerShown: false}}/>
-    </Stack>
+        <Stack.Screen name='views/bookingDetails' options={{headerShown: false}}/>
+      </Stack>
     </GlobalProvider>
-
-
-    
   ) 
 }
 
 export default RootLayout
-
