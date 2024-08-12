@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,13 +8,11 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
-import React, { useState } from "react";
-import { getCurrentUser } from "@/lib/appwrite"; // Assuming appwrite.js is in the same directory
+import { getCurrentUser, createBooking } from "@/lib/appwrite"; // Import necessary functions
 import { styled } from "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Picker } from "@react-native-picker/picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
-
 import CustomButtons from "@/components/CustomButtons";
 
 const StyledSafeAreaView = styled(SafeAreaView);
@@ -35,6 +34,10 @@ const Bookmark = () => {
   const [serviceFrequency, setServiceFrequency] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [wasteType, setWasteType] = useState("");
+  const [wasteVolume, setWasteVolume] = useState("");
+  const [emergencyContact, setEmergencyContact] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onChangeDate = (event, selectedDate) => {
     setShowDatePicker(false); // Close the date picker after selection
@@ -50,18 +53,45 @@ const Bookmark = () => {
     }
   };
 
-  const [wasteType, setWasteType] = useState("");
-  const [wasteVolume, setWasteVolume] = useState("");
-  const [specialHandling, setSpecialHandling] = useState("");
-  const [accessInfo, setAccessInfo] = useState("");
-  const [emergencyContact, setEmergencyContact] = useState("");
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const submit = async () => {
-    Alert.alert("Error", "Please fill all the fields");
-  };
+    if (!name || !email || !phone || !address || !serviceType || !serviceFrequency || !wasteType || !wasteVolume || !emergencyContact) {
+      Alert.alert("Error", "Please fill all the fields");
+      return;
+    }
 
+    const validateEmail = (email) => {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(String(email).toLowerCase());
+    };
+
+    setIsSubmitting(true);
+
+    try {
+      const user = await getCurrentUser(); // Fetch the current user
+
+      const bookingData = {
+        name,
+        email,
+        phone,
+        address,
+        serviceType,
+        serviceFrequency,
+        pickupDate: date.toISOString(), // Ensure pickupDate is included
+        pickupTime: time.toISOString(), // Ensure pickupTime is included
+        wasteType,
+        wasteVolume: parseFloat(wasteVolume), // Ensure wasteVolume is a double
+        emergencyContact,
+      };
+
+      const newDocument = await createBooking(bookingData); // Use createBooking function
+
+      Alert.alert("Success", "Service booked successfully!");
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <StyledSafeAreaView className="bg-primary h-full">
       <StyledScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -86,6 +116,7 @@ const Bookmark = () => {
                 value={email}
                 onChangeText={setEmail}
                 style={styles.input}
+                keyboardType="email-address"
               />
             </StyledView>
             <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
@@ -175,7 +206,7 @@ const Bookmark = () => {
                 />
               )}
             </StyledView>
-
+  
             <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
               <StyledPicker
                 selectedValue={wasteType}
@@ -202,7 +233,7 @@ const Bookmark = () => {
                 style={styles.input}
               />
             </StyledView>
-
+  
             <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
               <STextInput
                 className="flex-1"
@@ -216,14 +247,14 @@ const Bookmark = () => {
               title="Book a Pick-Up"
               handlePress={submit}
               containerStyle={[styles.buttonContainer, { marginTop: 7 }]}
-              isLoading={false} // Set this based on your actual loading state
+              isLoading={isSubmitting} // Set this based on your actual loading state
             />
           </StyledView>
         </StyledView>
       </StyledScrollView>
     </StyledSafeAreaView>
   );
-};
+}
 
 export default Bookmark;
 
@@ -231,26 +262,17 @@ const styles = StyleSheet.create({
   input: {
     height: 40,
     paddingLeft: 10,
+    color: "gray",
   },
   picker: {
     flex: 1,
-    color: "black",
+    color: "gray",
   },
   scrollViewContent: {
     flexGrow: 1,
   },
-
   buttonContainer: {
     alignSelf: "center", // Center the button horizontally
     marginBottom: 10, // Adjust margin as needed
-  },
-  input: {
-    height: 40,
-    paddingLeft: 10,
-    color: "gray",
-  },
-  picker: {
-    flex: 1,
-    color: "gray",
   },
 });
