@@ -22,6 +22,8 @@ const account = new Account(client);
 const avatars = new Avatars(client);
 const databases = new Databases(client);
 
+export { account, avatars, databases, Query };
+
 // Function to create a new booking
 export const createBooking = async (bookingData) => {
   try {
@@ -109,3 +111,18 @@ export async function getCurrentUser() {
     return null;
   }
 }
+
+// Function to fetch bookings
+export const fetchBookings = async (email) => {
+  try {
+    const response = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.bookingId,
+      [Query.equal("email", email)] // Use the email attribute
+    );
+    return response.documents;
+  } catch (error) {
+    console.error("Error fetching bookings:", error);
+    throw new Error(error.message);
+  }
+};

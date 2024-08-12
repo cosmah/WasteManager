@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
-import { getCurrentUser } from "@/lib/appwrite"; // Assuming appwrite.js is in the same directory
+import { getCurrentUser, fetchBookings } from "@/lib/appwrite"; // Import necessary functions
 import { styled } from "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -11,23 +11,27 @@ const StyledImage = styled(Image);
 
 const Profile = () => {
   const [user, setUser] = useState(null);
+  const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const currentUser = await getCurrentUser();
-      setUser(currentUser);
+    const fetchUserAndBookings = async () => {
+      try {
+        const currentUser = await getCurrentUser();
+        console.log("Current User:", currentUser); // Log current user
+        setUser(currentUser);
+
+        if (currentUser && currentUser.email) {
+          const userBookings = await fetchBookings(currentUser.email);
+          console.log("Bookings:", userBookings); // Log bookings
+          setBookings(userBookings);
+        }
+      } catch (error) {
+        console.error("Error fetching user or bookings:", error);
+      }
     };
 
-    fetchUser();
+    fetchUserAndBookings();
   }, []);
-
-  if (!user) {
-    return (
-      <StyledSafeAreaView style={styles.container}>
-        <Text>Loading...</Text>
-      </StyledSafeAreaView>
-    );
-  }
 
   return (
     <StyledSafeAreaView className="bg-primary h-full" style={styles.container}>
@@ -55,7 +59,15 @@ const Profile = () => {
           className="rounded-xl"
         >
           <StyledView className="flex-row justify-around mt-5">
-            
+            <ScrollView>
+              {bookings.map((booking) => (
+                <StyledView key={booking.$id} style={styles.bookingItem}>
+                  <StyledText style={styles.bookingText}>Service Type: {booking.serviceType}</StyledText>
+                  <StyledText style={styles.bookingText}>Date: {new Date(booking.pickupDate).toLocaleDateString()}</StyledText>
+                  <StyledText style={styles.bookingText}>Time: {new Date(booking.pickupTime).toLocaleTimeString()}</StyledText>
+                </StyledView>
+              ))}
+            </ScrollView>
           </StyledView>
         </StyledView>
       </StyledView>
@@ -90,5 +102,15 @@ const styles = StyleSheet.create({
   },
   email: {
     fontSize: 15,
+  },
+  bookingItem: {
+    backgroundColor: "#fff",
+    padding: 10,
+    marginVertical: 5,
+    borderRadius: 10,
+  },
+  bookingText: {
+    fontSize: 16,
+    color: "#000",
   },
 });
