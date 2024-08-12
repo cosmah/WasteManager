@@ -36,6 +36,8 @@ const Bookmark = () => {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [wasteType, setWasteType] = useState("");
   const [wasteVolume, setWasteVolume] = useState("");
+  const [specialHandling, setSpecialHandling] = useState("");
+  const [accessInfo, setAccessInfo] = useState("");
   const [emergencyContact, setEmergencyContact] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -53,16 +55,37 @@ const Bookmark = () => {
     }
   };
 
+  const validateEmail = (email) => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+  };
+
+  const resetFields = () => {
+    setName("");
+    setEmail("");
+    setPhone("");
+    setAddress("");
+    setServiceType("");
+    setServiceFrequency("");
+    setWasteType("");
+    setWasteVolume("");
+    setSpecialHandling("");
+    setAccessInfo("");
+    setEmergencyContact("");
+    setDate(new Date());
+    setTime(new Date());
+  };
+
   const submit = async () => {
     if (!name || !email || !phone || !address || !serviceType || !serviceFrequency || !wasteType || !wasteVolume || !emergencyContact) {
       Alert.alert("Error", "Please fill all the fields");
       return;
     }
 
-    const validateEmail = (email) => {
-      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return re.test(String(email).toLowerCase());
-    };
+    if (!validateEmail(email)) {
+      Alert.alert("Error", "Please enter a valid email address");
+      return;
+    }
 
     setIsSubmitting(true);
 
@@ -86,6 +109,7 @@ const Bookmark = () => {
       const newDocument = await createBooking(bookingData); // Use createBooking function
 
       Alert.alert("Success", "Service booked successfully!");
+      resetFields(); // Reset fields after successful booking
     } catch (error) {
       Alert.alert("Error", error.message);
     } finally {
