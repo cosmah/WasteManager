@@ -1,15 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, FlatList, Alert, Button } from 'react-native';
-import { fetchBookings, sendNotification } from '@/lib/appwrite';
+import { StyleSheet, Text, View, FlatList, Alert } from 'react-native';
+import { fetchBookings } from '@/lib/appwrite';
 import * as Notifications from 'expo-notifications';
 import { registerForPushNotificationsAsync } from "@/components/NotificationConfig";
 
-const BookingScreen = ({ email }) => {
+const BookingScreen = ({ email = '' }) => {
   const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
     const fetchBookingsData = async () => {
       try {
+        // Log the email parameter
+        console.log('Fetching bookings for email:', email);
+
+        // Validate the email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+          throw new Error('Invalid email format');
+        }
+
         const bookingsData = await fetchBookings(email);
         setBookings(bookingsData);
       } catch (error) {
@@ -29,16 +38,6 @@ const BookingScreen = ({ email }) => {
     return () => subscription.remove();
   }, [email]);
 
-  const scheduleLocalNotification = async () => {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: 'Reminder',
-        body: 'Your booking is starting soon.',
-      },
-      trigger: { seconds: 120 }, // 2 minutes from now
-    });
-  };
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Bookings</Text>
@@ -50,7 +49,6 @@ const BookingScreen = ({ email }) => {
             <Text style={styles.bookingText}>Name: {item.name}</Text>
             <Text style={styles.bookingText}>Date: {new Date(item.date).toLocaleDateString()}</Text>
             <Text style={styles.bookingText}>Time: {new Date(item.time).toLocaleTimeString()}</Text>
-            <Button title="Set Reminder" onPress={scheduleLocalNotification} />
           </View>
         )}
       />

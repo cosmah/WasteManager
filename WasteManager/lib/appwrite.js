@@ -10,6 +10,7 @@ export const appwriteConfig = {
   storageId: "66b12ec900382dffbc76",
   bookingId: "66b9db28002948df6205",  // Assuming this is the correct collection for storing bookings
 };
+import * as Notifications from 'expo-notifications';
 
 const client = new Client();
 
@@ -24,6 +25,8 @@ const databases = new Databases(client);
 
 export { account, avatars, databases, Query };
 
+
+
 // Function to create a new booking
 export const createBooking = async (bookingData) => {
   try {
@@ -34,11 +37,55 @@ export const createBooking = async (bookingData) => {
       bookingData
     );
 
+    // Schedule notifications
+    scheduleBookingNotifications(newBooking);
+
     return newBooking;
   } catch (error) {
     console.error("Error creating booking:", error);
     throw new Error(error.message);
   }
+};
+
+// Function to schedule notifications
+const scheduleBookingNotifications = async (booking) => {
+  const bookingTime = new Date(booking.time); // Assuming booking.time is a timestamp
+
+  // Schedule a notification for confirmation
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: 'Booking Confirmed',
+      body: `Your booking for ${booking.name} has been confirmed.`,
+    },
+    trigger: { seconds: 0 }, // Immediately
+  });
+
+  // Schedule a reminder notification 5 hours before
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: 'Upcoming Booking Reminder',
+      body: `Your booking for ${booking.name} is in 5 hours.`,
+    },
+    trigger: { date: new Date(bookingTime.getTime() - 5 * 60 * 60 * 1000) }, // 5 hours before
+  });
+
+  // Schedule a notification 20 minutes before
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: 'Booking Starting Soon',
+      body: `Your booking for ${booking.name} is starting in 20 minutes.`,
+    },
+    trigger: { date: new Date(bookingTime.getTime() - 20 * 60 * 1000) }, // 20 minutes before
+  });
+
+  // Schedule a notification for after the booking time
+  await Notifications.scheduleNotificationAsync({
+    content: {
+      title: 'Booking Ended',
+      body: `Your booking for ${booking.name} has ended.`,
+    },
+    trigger: { date: new Date(bookingTime.getTime() + 30 * 60 * 1000) }, // 30 minutes after
+  });
 };
 
 
