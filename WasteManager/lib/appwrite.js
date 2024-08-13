@@ -128,8 +128,12 @@ export async function getCurrentUser() {
   }
 }
 
-// Function to fetch bookings
+// Function to fetch bookings// appwrite.js
 export const fetchBookings = async (email) => {
+  if (!email) {
+    throw new Error("Invalid email parameter");
+  }
+
   try {
     const response = await databases.listDocuments(
       appwriteConfig.databaseId,
@@ -139,6 +143,22 @@ export const fetchBookings = async (email) => {
     return response.documents;
   } catch (error) {
     console.error("Error fetching bookings:", error);
+    throw new Error(error.message);
+  }
+};
+
+// Function to send a notification
+export const sendNotification = async (title, body, targetType, targetId) => {
+  try {
+    const response = await notifications.create({
+      title,
+      body,
+      targetType,
+      targetTypeId: targetId,
+    });
+    console.log('Notification sent successfully', response);
+  } catch (error) {
+    console.error('Error sending notification:', error);
     throw new Error(error.message);
   }
 };
