@@ -42,53 +42,58 @@ const BookingDetails = () => {
   return (
     <StyledSafeAreaView className="bg-primary h-full" style={styles.container}>
       <StyledView style={styles.header}>
-        <StyledText className="text-2xl font-psemibold text-secondary" style={styles.title}>Booking Details</StyledText>
+        <StyledText
+          className="text-2xl font-psemibold text-secondary"
+          style={styles.title}
+        >
+          Booking Details
+        </StyledText>
       </StyledView>
       <StyledView style={styles.content} className="rounded-xl p-4">
-        <StyledText style={styles.bookingText}>
-          <Text style={styles.label}>Name:</Text> {booking.name}
-        </StyledText>
-        <StyledText style={styles.bookingText}>
-          <Text style={styles.label}>Email:</Text> {booking.email}
-        </StyledText>
-        <StyledText style={styles.bookingText}>
-          <Text style={styles.label}>Phone:</Text> {booking.phone}
-        </StyledText>
-        <StyledText style={styles.bookingText}>
-          <Text style={styles.label}>Address:</Text> {booking.address}
-        </StyledText>
-        <StyledText style={styles.bookingText}>
-          <Text style={styles.label}>Service Type:</Text> {booking.serviceType}
-        </StyledText>
-        <StyledText style={styles.bookingText}>
-          <Text style={styles.label}>Service Frequency:</Text>{" "}
-          {booking.serviceFrequency}
-        </StyledText>
-        <StyledText style={styles.bookingText}>
-          <Text style={styles.label}>Waste Type:</Text> {booking.wasteType}
-        </StyledText>
-        <StyledText style={styles.bookingText}>
-          <Text style={styles.label}>Waste Volume:</Text> {booking.wasteVolume}
-        </StyledText>
-        <StyledText style={styles.bookingText}>
-          <Text style={styles.label}>Special Handling:</Text>{" "}
-          {booking.specialHandling}
-        </StyledText>
-        <StyledText style={styles.bookingText}>
-          <Text style={styles.label}>Access Info:</Text> {booking.accessInfo}
-        </StyledText>
-        <StyledText style={styles.bookingText}>
-          <Text style={styles.label}>Emergency Contact:</Text>{" "}
-          {booking.emergencyContact}
-        </StyledText>
-        <StyledText style={styles.bookingText}>
-          <Text style={styles.label}>Date:</Text>{" "}
-          {new Date(booking.date).toLocaleDateString()}
-        </StyledText>
-        <StyledText style={styles.bookingText}>
-          <Text style={styles.label}>Time:</Text>{" "}
-          {new Date(booking.time).toLocaleTimeString()}
-        </StyledText>
+        <StyledView style={styles.bookingText}>
+          <Text style={styles.label}>Name:</Text>
+          <Text>{booking.name}</Text>
+        </StyledView>
+        <StyledView style={styles.bookingText}>
+          <Text style={styles.label}>Email:</Text>
+          <Text>{booking.email}</Text>
+        </StyledView>
+        <StyledView style={styles.bookingText}>
+          <Text style={styles.label}>Phone:</Text>
+          <Text>{booking.phone}</Text>
+        </StyledView>
+        <StyledView style={styles.bookingText}>
+          <Text style={styles.label}>Address:</Text>
+          <Text>{booking.address}</Text>
+        </StyledView>
+        <StyledView style={styles.bookingText}>
+          <Text style={styles.label}>Service Type:</Text>
+          <Text>{booking.serviceType}</Text>
+        </StyledView>
+        <StyledView style={styles.bookingText}>
+          <Text style={styles.label}>Service Frequency:</Text>
+          <Text>{booking.serviceFrequency}</Text>
+        </StyledView>
+        <StyledView style={styles.bookingText}>
+          <Text style={styles.label}>Waste Type:</Text>
+          <Text>{booking.wasteType}</Text>
+        </StyledView>
+        <StyledView style={styles.bookingText}>
+          <Text style={styles.label}>Waste Volume:</Text>
+          <Text>{booking.wasteVolume}</Text>
+        </StyledView>
+        <StyledView style={styles.bookingText}>
+          <Text style={styles.label}>Emergency Contact:</Text>
+          <Text>{booking.emergencyContact}</Text>
+        </StyledView>
+        <StyledView style={styles.bookingText}>
+          <Text style={styles.label}>Date:</Text>
+          <Text>{new Date(booking.date).toLocaleDateString()}</Text>
+        </StyledView>
+        <StyledView style={styles.bookingText}>
+          <Text style={styles.label}>Time:</Text>
+          <Text>{new Date(booking.time).toLocaleTimeString()}</Text>
+        </StyledView>
       </StyledView>
     </StyledSafeAreaView>
   );
@@ -113,7 +118,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   bookingText: {
-    fontSize: 18,
+    fontSize: 20,
     marginVertical: 5,
   },
   label: {
