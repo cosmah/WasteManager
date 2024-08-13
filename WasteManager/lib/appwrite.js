@@ -41,6 +41,22 @@ export const createBooking = async (bookingData) => {
   }
 };
 
+
+// Function to fetch a booking by ID
+export const fetchBookingById = async (id) => {
+  try {
+    const response = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.bookingId,
+      id
+    );
+    return response;
+  } catch (error) {
+    console.error("Error fetching booking by ID:", error);
+    throw new Error(error.message);
+  }
+};
+
 // Existing createUser function...
 export const createUser = async (email, password, username) => {
   try {
