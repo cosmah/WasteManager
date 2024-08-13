@@ -67,8 +67,7 @@ const Bookmark = () => {
     setServiceFrequency("");
     setWasteType("");
     setWasteVolume("");
-    setSpecialHandling("");
-    setAccessInfo("");
+
     setEmergencyContact("");
     setDate(new Date());
     setTime(new Date());
