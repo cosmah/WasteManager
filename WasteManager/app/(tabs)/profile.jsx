@@ -1,8 +1,9 @@
-import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { getCurrentUser, fetchBookings } from "@/lib/appwrite"; // Import necessary functions
 import { styled } from "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
 
 const StyledSafeAreaView = styled(SafeAreaView);
 const StyledView = styled(View);
@@ -12,6 +13,7 @@ const StyledImage = styled(Image);
 const Profile = () => {
   const [user, setUser] = useState(null);
   const [bookings, setBookings] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserAndBookings = async () => {
@@ -67,11 +69,15 @@ const Profile = () => {
           <StyledView className="flex-row justify-around mt-5">
             <ScrollView>
               {bookings.map((booking) => (
-                <StyledView key={booking.$id} style={styles.bookingItem}>
+                <TouchableOpacity
+                  key={booking.$id}
+                  style={styles.bookingItem}
+                  onPress={() => router.push(`/views/bookingDetails?id=${booking.$id}`)}
+                >
                   <StyledText style={styles.bookingText}>Service Type: {booking.serviceType}</StyledText>
                   <StyledText style={styles.bookingText}>Date: {new Date(booking.pickupDate).toLocaleDateString()}</StyledText>
                   <StyledText style={styles.bookingText}>Time: {new Date(booking.pickupTime).toLocaleTimeString()}</StyledText>
-                </StyledView>
+                </TouchableOpacity>
               ))}
             </ScrollView>
           </StyledView>

@@ -36,8 +36,6 @@ const Bookmark = () => {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [wasteType, setWasteType] = useState("");
   const [wasteVolume, setWasteVolume] = useState("");
-  const [specialHandling, setSpecialHandling] = useState("");
-  const [accessInfo, setAccessInfo] = useState("");
   const [emergencyContact, setEmergencyContact] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
