@@ -1,6 +1,13 @@
-import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
-import { getCurrentUser, fetchBookings } from "@/lib/appwrite"; // Import necessary functions
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
+import { getCurrentUser, fetchBookings, logout } from "@/lib/appwrite"; // Import logout function
 import { styled } from "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -35,6 +42,15 @@ const Profile = () => {
     fetchUserAndBookings();
   }, []);
 
+  const handleLogout = async () => {
+    try {
+      await logout(); // Call the logout function
+      router.push("/sign-in"); // Redirect the user to the home page or login screen after logout
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
   if (!user) {
     return <Text>Loading...</Text>;
   }
@@ -42,9 +58,16 @@ const Profile = () => {
   return (
     <StyledSafeAreaView className="bg-primary h-full" style={styles.container}>
       <StyledView style={{ flex: 1 }}>
-        <StyledView className="flex-row items-center mb-6 p-5" style={styles.profileContainer}>
+        <StyledView
+          className="flex-row items-center mb-6 p-5"
+          style={styles.profileContainer}
+        >
           {user.avatar && (
-            <StyledImage className="" source={{ uri: user.avatar }} style={styles.avatar} />
+            <StyledImage
+              className=""
+              source={{ uri: user.avatar }}
+              style={styles.avatar}
+            />
           )}
           <StyledView style={styles.infoContainer}>
             <StyledText
@@ -60,6 +83,9 @@ const Profile = () => {
               {user.email}
             </StyledText>
           </StyledView>
+          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+            <Text style={styles.logoutButtonText}>Log Out</Text>
+          </TouchableOpacity>
         </StyledView>
 
         <StyledView
@@ -72,11 +98,19 @@ const Profile = () => {
                 <TouchableOpacity
                   key={booking.$id}
                   style={styles.bookingItem}
-                  onPress={() => router.push(`/views/bookingDetails?id=${booking.$id}`)}
+                  onPress={() =>
+                    router.push(`/views/bookingDetails?id=${booking.$id}`)
+                  }
                 >
-                  <StyledText style={styles.bookingText}>Service Type: {booking.serviceType}</StyledText>
-                  <StyledText style={styles.bookingText}>Date: {new Date(booking.pickupDate).toLocaleDateString()}</StyledText>
-                  <StyledText style={styles.bookingText}>Time: {new Date(booking.pickupTime).toLocaleTimeString()}</StyledText>
+                  <StyledText style={styles.bookingText}>
+                    Service Type: {booking.serviceType}
+                  </StyledText>
+                  <StyledText style={styles.bookingText}>
+                    Date: {new Date(booking.pickupDate).toLocaleDateString()}
+                  </StyledText>
+                  <StyledText style={styles.bookingText}>
+                    Time: {new Date(booking.pickupTime).toLocaleTimeString()}
+                  </StyledText>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -95,8 +129,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   profileContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   avatar: {
     width: 70,
@@ -124,5 +158,15 @@ const styles = StyleSheet.create({
   bookingText: {
     fontSize: 16,
     color: "#000",
+  },
+  logoutButton: {
+    backgroundColor: "#f44336",
+    padding: 10,
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  logoutButtonText: {
+    color: "#fff",
+    textAlign: "center",
   },
 });

@@ -32,26 +32,31 @@ const SignUp = () => {
       Alert.alert("Error", "Please fill all the fields");
       return;
     }
-
+  
     if (isSubmitting) return;
-
+  
     setIsSubmitting(true);
-
+  
     try {
-      // Trim email to remove any leading or trailing whitespace
-      const trimmedEmail = form.email.trim();
-
-      // Log only the relevant fields
-      console.log("Form data before submission:", {
-        username: form.username,
-        email: trimmedEmail,
-        password: form.password,
+      const response = await fetch('http://127.0.0.1:8000/api/user/register/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: form.username,
+          email: form.email.trim(),
+          password: form.password,
+        }),
       });
-
-      // Logout any existing session
-      await logout();
-
-      const result = await createUser(trimmedEmail, form.password, form.username);
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Something went wrong');
+      }
+  
+      const result = await response.json();
+      console.log("User created successfully:", result);
       router.replace("/home");
     } catch (error) {
       Alert.alert("Error", error.message);
