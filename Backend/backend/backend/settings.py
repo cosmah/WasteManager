@@ -31,16 +31,20 @@ SECRET_KEY = 'django-insecure-+15p_=g-q(vy&)9bi^tu8m3uck29e5&+14zid6@3+ldfx&zd_d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["192.168.78.177"]
+# Security settings (adjust as necessary)
+DEBUG = True  # Make sure this is False in production
 
+ALLOWED_HOSTS = ['*']  # For development, you can allow all hosts. In production, specify your domain or IP.
+
+
+# JWT Authentication settings
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
-        #"rest_framework.permissions.AllowAny",
-    ],
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
 }
 
 SIMPLE_JWT = {

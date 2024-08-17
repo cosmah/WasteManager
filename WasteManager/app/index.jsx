@@ -1,14 +1,14 @@
-import React from "react";
-import { Text, View, Image, StatusBar } from "react-native";
-import { styled } from "nativewind";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { ScrollView } from "react-native";
-import { Redirect, router } from "expo-router";
+import React from 'react';
+import { Text, View, Image, StatusBar } from 'react-native';
+import { styled } from 'nativewind';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { ScrollView } from 'react-native';
+import { Redirect, router } from 'expo-router';
 
 
-import { images } from "../assets/images"; // Correct path to the image file
-import CustomButtons from "@/components/CustomButtons";
-import { useGlobalContext } from "@/context/GlobalProvider";
+import { images } from '../assets/images';
+import CustomButtons from '@/components/CustomButtons';
+import { useGlobalContext } from '@/context/GlobalProvider';
 
 const StyledView = styled(View);
 const SImage = styled(Image);
@@ -16,10 +16,9 @@ const StyledText = styled(Text);
 const StyledSafeAreaView = styled(SafeAreaView);
 
 export default function App() {
+  const { isLoading, isLoggedIn } = useGlobalContext();
 
-const {isLoading, isLoggedIn} = useGlobalContext();
-
-if(!isLoading && isLoggedIn) return <Redirect href="/home" />;
+  if (!isLoading && isLoggedIn) return <Redirect href="/home" />;
 
   return (
     <StyledSafeAreaView className="bg-primary h-full">
@@ -30,13 +29,11 @@ if(!isLoading && isLoggedIn) return <Redirect href="/home" />;
             className="w-[130px] h-[84px]"
             resizeMode="contain"
           />
-
           <SImage
             source={images.cards}
             className="w-[380px] h-[300px]"
             resizeMode="contain"
           />
-
           <StyledView className="relative mt-5">
             <StyledText className="text-3xl text-white font-bold text-center">
               Hi, Let's go green with

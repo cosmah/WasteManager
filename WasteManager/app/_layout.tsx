@@ -2,7 +2,7 @@ import { Slot, SplashScreen, Stack } from 'expo-router'
 import { useFonts } from 'expo-font'
 import React, { useEffect } from 'react';
 
-import GlobalProvider from '../context/GlobalProvider'
+import {GlobalProvider} from '../context/GlobalProvider'
 
 // Managing splash screen, prevent splash screen from auto hiding before assets load
 SplashScreen.preventAutoHideAsync();

@@ -1,46 +1,34 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { getCurrentUser } from "../lib/api"; // Updated import
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { loginUser, getProfile } from '@/lib/api';
 
 const GlobalContext = createContext();
-export const useGlobalContext = () => useContext(GlobalContext);
 
-const GlobalProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] = useState(null);
+export const GlobalProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
 
   useEffect(() => {
-    getCurrentUser()
-      .then((res) => {
-        if (res) {
-          setIsLoggedIn(true);
-          setUser(res);
-        } else {
-          setIsLoggedIn(false);
-          setUser(null);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .finally(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const profile = await getProfile();
+        setUserProfile(profile);
+        setIsLoggedIn(true);
+      } catch (error) {
+        setIsLoggedIn(false);
+      } finally {
         setIsLoading(false);
-      });
+      }
+    };
+
+    checkLoginStatus();
   }, []);
 
   return (
-    <GlobalContext.Provider
-      value={{
-        isLoggedIn,
-        setIsLoggedIn,
-        user,
-        setUser,
-        isLoading,
-      }}
-    >
+    <GlobalContext.Provider value={{ isLoading, isLoggedIn, userProfile }}>
       {children}
     </GlobalContext.Provider>
   );
 };
 
-export default GlobalProvider;
+export const useGlobalContext = () => useContext(GlobalContext);

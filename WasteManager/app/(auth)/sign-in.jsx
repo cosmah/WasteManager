@@ -53,7 +53,7 @@ const submit = async () => {
     console.log("Login successful:", result);
 
     // Store the token in AsyncStorage
-    await AsyncStorage.setItem('token', result.access);
+    await AsyncStorage.setItem('accessToken', result.access);
 
     // Update global context or state with user info
     setUser(result.user); // Assuming you have user info in the response

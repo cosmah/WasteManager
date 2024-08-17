@@ -1,48 +1,71 @@
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { refreshToken } from './auth';
 
-// Function to login user and store token
-export const loginUser = async (credentials) => {
+const BASE_URL = 'http://192.168.78.177:8000/api/user/';
+
+export const registerUser = async (data) => {
   try {
-    const response = await axios.post('http://192.168.78.177:8000/api/token/', credentials);
-    const { access } = response.data;
-    await AsyncStorage.setItem('token', access);
-    console.log('Token stored:', access); // Debugging line
+    const response = await axios.post(`${BASE_URL}register/`, data);
     return response.data;
   } catch (error) {
-    console.error('Error logging in:', error.response.data);
-    return null;
+    console.error("Registration Error:", error.response ? error.response.data : error.message);
+    throw error;
   }
 };
 
-// Function to get current user using stored token
-export const getCurrentUser = async () => {
+export const loginUser = async (data) => {
   try {
-    const token = await AsyncStorage.getItem('token');
-    console.log('Retrieved token:', token); // Debugging line
+    const response = await axios.post(`${BASE_URL}token/`, data); // Ensure this matches your Django login endpoint
+    await AsyncStorage.setItem('accessToken', response.data.access);
+    await AsyncStorage.setItem('refreshToken', response.data.refresh); // Store refresh token
+    console.log('Login Successful:', response.data); // Debugging
+    return response.data;
+  } catch (error) {
+    console.error("Login Error:", error.response ? error.response.data : error.message);
+    throw error;
+  }
+};
+
+export const getProfile = async () => {
+  try {
+    let token = await AsyncStorage.getItem('accessToken');
+    console.log('Access Token:', token); // Debugging
+
     if (!token) {
-      throw new Error('No token found');
+      throw new Error("No access token found. Please log in.");
     }
 
-    const response = await axios.get('http://192.168.78.177:8000/api/user/current/', {
+    let response = await axios.get(`${BASE_URL}profile/`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching current user:', error);
-    return null;
-  }
-};
 
-// Function to register a new user
-export const registerUser = async (userData) => {
-  try {
-    const response = await axios.post('http://192.168.78.177:8000/api/user/register/', userData);
+    // If the response is successful, return the profile data
+    console.log('Profile Data:', response.data); // Debugging
     return response.data;
+
   } catch (error) {
-    console.error('Error registering user:', error.response.data);
-    return null;
+    // If the error is a 401, try refreshing the token
+    if (error.response && error.response.status === 401) {
+      console.log('Access token expired, refreshing token...');
+      try {
+        token = await refreshToken(); // Ensure refreshToken is working as expected
+        const response = await axios.get(`${BASE_URL}profile/`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log('Profile Data after refresh:', response.data); // Debugging
+        return response.data;
+      } catch (refreshError) {
+        console.error('Error during token refresh:', refreshError.response ? refreshError.response.data : refreshError.message);
+        throw refreshError; // Rethrow the error after logging it
+      }
+    } else {
+      console.error("Profile Fetch Error:", error.response ? error.response.data : error.message); // Debugging
+      throw error;
+    }
   }
 };
