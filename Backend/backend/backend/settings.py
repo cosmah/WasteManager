@@ -170,3 +170,15 @@ CORS_ALLOW_METHODS = [
     'POST',
     'PUT',
 ]
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'mysql.connector.django',
+        'NAME': 'wasteManager',  # Replace with your database name
+        'USER': 'root',                 # Default MySQL username
+        'PASSWORD': '',                 # Default MySQL password (leave empty if not set)
+        'HOST': 'localhost',
+        'PORT': '3306',                 # Default MySQL port
+    }
+}
+
