@@ -7,7 +7,7 @@ import { Image } from "react-native";
 import FormField from "@/components/FormField";
 import CustomButtons from "@/components/CustomButtons";
 import { Link, router } from "expo-router";
-import { createUser, logout } from "@/lib/appwrite";
+import { createUser, logout } from "@/lib/api";
  import axios from 'axios';
 
 const StyledText = styled(Text);
