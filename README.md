@@ -8,6 +8,7 @@ python manage.py startapp api
 python manage.py makemigrations 
 python manage.py migrate 
 python manage.py runserver 
+python manage.py runserver 192.168.78.177:8000
 
 https://github.com/techwithtim/Django-React-Full-Stack-App/blob/main/backend/backend/settings.py
 

@@ -9,4 +9,5 @@ This is a react native project using expo framework
 8. For navigation `npm install @react-navigation/  native @react-navigation/native-stack
     npm install react-native-gesture-handler react-native-reanimated react-native-screens react-native-safe-area-context @react-native-community/masked-view
     `
+npm install axios
 

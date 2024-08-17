@@ -7,6 +7,7 @@ import { Image } from "react-native";
 import FormField from "@/components/FormField";
 import CustomButtons from "@/components/CustomButtons";
 import { Link, router } from "expo-router";
+import axios from 'axios';
 import { signIn, logout, getCurrentUser } from "@/lib/appwrite";
 import { useGlobalContext } from "@/context/GlobalProvider";
 
@@ -26,51 +27,46 @@ const SignIn = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const submit = async () => {
-    if (form.email === "" || form.password === "") {
-      Alert.alert("Error", "Please fill all the fields");
-      return; // Ensure you return here to prevent further execution
-    }
-  
-    setIsSubmitting(true);
-  
-    try {
-      const trimmedEmail = form.email.trim();
-      
-      const response = await fetch('http://127.0.0.1:8000/api/user/login/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: trimmedEmail,
-          password: form.password,
-        }),
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Login failed');
-      }
-  
-      const result = await response.json();
-      console.log("Login successful:", result);
-  
-      // Store the token in AsyncStorage
-      await AsyncStorage.setItem('token', result.access);
 
-      // Update global context or state with user info
-      setUser(result.user); // Assuming you have user info in the response
-      setIsLogged(true);
-  
-      Alert.alert("Success", "Logged in successfully");
-      router.replace("/home");
-    } catch (error) {
-      Alert.alert("Error", error.message);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+
+const submit = async () => {
+  if (form.email === "" || form.password === "") {
+    Alert.alert("Error", "Please fill all the fields");
+    return; // Ensure you return here to prevent further execution
+  }
+
+  setIsSubmitting(true);
+
+  try {
+    const trimmedEmail = form.email.trim();
+    
+    const response = await axios.post('http://192.168.78.177:8000/api/user/login/', {
+      email: trimmedEmail,
+      password: form.password,
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const result = response.data;
+    console.log("Login successful:", result);
+
+    // Store the token in AsyncStorage
+    await AsyncStorage.setItem('token', result.access);
+
+    // Update global context or state with user info
+    setUser(result.user); // Assuming you have user info in the response
+    setIsLogged(true);
+
+    Alert.alert("Success", "Logged in successfully");
+    router.replace("/home");
+  } catch (error) {
+    Alert.alert("Error", error.response?.data?.detail || error.message);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <SafeAreaViewContainer className="bg-primary h-full">

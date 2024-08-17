@@ -8,6 +8,7 @@ import FormField from "@/components/FormField";
 import CustomButtons from "@/components/CustomButtons";
 import { Link, router } from "expo-router";
 import { createUser, logout } from "@/lib/appwrite";
+ import axios from 'axios';
 
 const StyledText = styled(Text);
 const SafeAreaViewContainer = styled(SafeAreaView);
@@ -27,43 +28,37 @@ const SignUp = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // LOGIN FUNCTION
-  const submit = async () => {
-    if (!form.username || !form.email || !form.password) {
-      Alert.alert("Error", "Please fill all the fields");
-      return;
-    }
-  
-    if (isSubmitting) return;
-  
-    setIsSubmitting(true);
-  
-    try {
-      const response = await fetch('http://127.0.0.1:8000/api/user/register/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: form.username,
-          email: form.email.trim(),
-          password: form.password,
-        }),
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Something went wrong');
-      }
-  
-      const result = await response.json();
-      console.log("User created successfully:", result);
-      router.replace("/home");
-    } catch (error) {
-      Alert.alert("Error", error.message);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+ 
+const submit = async () => {
+  if (!form.username || !form.email || !form.password) {
+    Alert.alert("Error", "Please fill all the fields");
+    return;
+  }
+
+  if (isSubmitting) return;
+
+  setIsSubmitting(true);
+
+  try {
+    const response = await axios.post('http://192.168.78.177:8000/api/user/register/', {
+      username: form.username,
+      email: form.email.trim(),
+      password: form.password,
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const result = response.data;
+    console.log("User created successfully:", result);
+    router.replace("/home");
+  } catch (error) {
+    Alert.alert("Error", error.response?.data?.detail || error.message);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <SafeAreaViewContainer className="bg-primary h-full">
