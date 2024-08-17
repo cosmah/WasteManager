@@ -10,3 +10,11 @@ python manage.py migrate
 python manage.py runserver 
 
 https://github.com/techwithtim/Django-React-Full-Stack-App/blob/main/backend/backend/settings.py
+
+^C(env) cosmah@cosmah:~/Desktop/pro/WasteManager/Backend/backend$ python manage.py createsuruser
+Username (leave blank to use 'cosmah'): admin
+Email address: jacfrost06@gmail.com
+Password: 
+Password (again): 
+Superuser created successfully.
+(env) cosmah@cosmah:~/Desktop/pro/WasteManager/Backend/backend$ 
