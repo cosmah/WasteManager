@@ -1,5 +1,5 @@
 THIS IS THE ROOT README.md
-
+source env/bin/activate
 env/Scripts/activate
 pip install -r requirements.txt
 django-admin startproject backend
