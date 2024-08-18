@@ -7,8 +7,7 @@ import { Image } from "react-native";
 import FormField from "@/components/FormField";
 import CustomButtons from "@/components/CustomButtons";
 import { Link, router } from "expo-router";
-import { createUser, logout } from "@/lib/api";
- import axios from 'axios';
+import axios from 'axios';
 
 const StyledText = styled(Text);
 const SafeAreaViewContainer = styled(SafeAreaView);
@@ -17,48 +16,44 @@ const StyledView = styled(View);
 const SLink = styled(Link);
 
 const SignUp = () => {
-  // Create user state field
   const [form, setForm] = useState({
     username: "",
     email: "",
     password: "",
   });
 
-  // Loading state
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // LOGIN FUNCTION
- 
-const submit = async () => {
-  if (!form.username || !form.email || !form.password) {
-    Alert.alert("Error", "Please fill all the fields");
-    return;
-  }
+  const submit = async () => {
+    if (!form.username || !form.email || !form.password) {
+      Alert.alert("Error", "Please fill all the fields");
+      return;
+    }
 
-  if (isSubmitting) return;
+    if (isSubmitting) return;
 
-  setIsSubmitting(true);
+    setIsSubmitting(true);
 
-  try {
-    const response = await axios.post('http://192.168.78.177:8000/api/user/register/', {
-      username: form.username,
-      email: form.email.trim(),
-      password: form.password,
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    try {
+      const response = await axios.post('http://192.168.58.177:8000/api/user/register/', {
+        username: form.username,
+        email: form.email.trim(),
+        password: form.password,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-    const result = response.data;
-    console.log("User created successfully:", result);
-    router.replace("/home");
-  } catch (error) {
-    Alert.alert("Error", error.response?.data?.detail || error.message);
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+      const result = response.data;
+      console.log("User created successfully:", result);
+      router.replace("/home");
+    } catch (error) {
+      Alert.alert("Error", error.response?.data?.detail || error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <SafeAreaViewContainer className="bg-primary h-full">

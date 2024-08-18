@@ -2,7 +2,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { refreshToken } from './auth';
 
-const BASE_URL = 'http://192.168.78.177:8000/api/user/';
+const BASE_URL = 'http://192.168.58.177:8000/';
 
 export const registerUser = async (data) => {
   try {
@@ -20,9 +20,33 @@ export const loginUser = async (data) => {
     await AsyncStorage.setItem('accessToken', response.data.access);
     await AsyncStorage.setItem('refreshToken', response.data.refresh); // Store refresh token
     console.log('Login Successful:', response.data); // Debugging
-    return response.data;
+
+    // Log the stored tokens to verify they are saved correctly
+    const storedAccessToken = await AsyncStorage.getItem('accessToken');
+    const storedRefreshToken = await AsyncStorage.getItem('refreshToken');
+    console.log('Stored Access Token:', storedAccessToken);
+    console.log('Stored Refresh Token:', storedRefreshToken);
   } catch (error) {
     console.error("Login Error:", error.response ? error.response.data : error.message);
+    throw error;
+  }
+};
+
+export const fetchUserProfile = async () => {
+  try {
+    const accessToken = await AsyncStorage.getItem('accessToken');
+    if (!accessToken) {
+      throw new Error('No access token found. Please log in.');
+    }
+
+    const response = await axios.get(`${BASE_URL}profile/`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Profile Fetch Error:", error.response ? error.response.data : error.message);
     throw error;
   }
 };

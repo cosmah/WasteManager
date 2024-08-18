@@ -8,7 +8,7 @@ import FormField from "@/components/FormField";
 import CustomButtons from "@/components/CustomButtons";
 import { Link, router } from "expo-router";
 import axios from 'axios';
-import { signIn, logout, getCurrentUser } from "@/lib/appwrite";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useGlobalContext } from "@/context/GlobalProvider";
 
 const StyledText = styled(Text);
@@ -18,7 +18,6 @@ const StyledView = styled(View);
 const SLink = styled(Link);
 
 const SignIn = () => {
-
   const { setUser, setIsLogged } = useGlobalContext();
   const [form, setForm] = useState({
     email: "",
@@ -27,46 +26,43 @@ const SignIn = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const submit = async () => {
+    if (form.email === "" || form.password === "") {
+      Alert.alert("Error", "Please fill all the fields");
+      return;
+    }
 
+    setIsSubmitting(true);
 
-const submit = async () => {
-  if (form.email === "" || form.password === "") {
-    Alert.alert("Error", "Please fill all the fields");
-    return; // Ensure you return here to prevent further execution
-  }
+    try {
+      const trimmedEmail = form.email.trim();
+      const response = await axios.post('http://192.168.58.177:8000/api/user/login/', {
+        email: trimmedEmail,
+        password: form.password,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-  setIsSubmitting(true);
+      const result = response.data;
+      console.log("Login successful:", result);
 
-  try {
-    const trimmedEmail = form.email.trim();
-    
-    const response = await axios.post('http://192.168.78.177:8000/api/user/login/', {
-      email: trimmedEmail,
-      password: form.password,
-    }, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+      // Store the token in AsyncStorage
+      await AsyncStorage.setItem('accessToken', result.access);
 
-    const result = response.data;
-    console.log("Login successful:", result);
+      // Update global context or state with user info
+      setUser(result.user); // Assuming you have user info in the response
+      setIsLogged(true);
 
-    // Store the token in AsyncStorage
-    await AsyncStorage.setItem('accessToken', result.access);
-
-    // Update global context or state with user info
-    setUser(result.user); // Assuming you have user info in the response
-    setIsLogged(true);
-
-    Alert.alert("Success", "Logged in successfully");
-    router.replace("/home");
-  } catch (error) {
-    Alert.alert("Error", error.response?.data?.detail || error.message);
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+      Alert.alert("Success", "Logged in successfully");
+      router.replace("/home");
+    } catch (error) {
+      Alert.alert("Error", error.response?.data?.detail || error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <SafeAreaViewContainer className="bg-primary h-full">
