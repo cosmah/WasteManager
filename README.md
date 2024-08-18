@@ -8,5 +8,9 @@ python manage.py startapp api
 python manage.py makemigrations 
 python manage.py migrate 
 python manage.py runserver 
+pip install mysql-connector-python
+
+
+
 
 https://github.com/techwithtim/Django-React-Full-Stack-App/blob/main/backend/backend/settings.py
