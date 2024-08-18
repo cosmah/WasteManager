@@ -8,7 +8,7 @@ import FormField from "@/components/FormField";
 import CustomButtons from "@/components/CustomButtons";
 import { Link, router } from "expo-router";
 import axios from "axios"; // Import axios
-import AsyncStorage from '@react-native-async-storage/async-storage';// For storing tokens
+import AsyncStorage from '@react-native-async-storage/async-storage'; // For storing tokens
 import { useGlobalContext } from "@/context/GlobalProvider";
 
 const StyledText = styled(Text);
@@ -41,6 +41,7 @@ const SignIn = () => {
       const response = await axios.post('http://192.168.251.26:8000/api/user/login/', {
         email: trimmedEmail,
         password: form.password,
+        username: trimmedEmail, // Include the username field
       });
 
       // Assuming the response contains access and refresh tokens
@@ -63,6 +64,8 @@ const SignIn = () => {
       Alert.alert("Success", "Logged in successfully");
       router.replace("/home"); // Navigate to home on success
     } catch (error) {
+      console.error("Login error:", error); // Log the error for debugging
+      console.error("Error response data:", error.response?.data); // Log the response data
       Alert.alert("Error", error.response?.data?.detail || "An error occurred");
     } finally {
       setIsSubmitting(false);

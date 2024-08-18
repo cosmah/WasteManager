@@ -16,27 +16,16 @@ const GlobalProvider = ({ children }) => {
         const token = await AsyncStorage.getItem('access_token'); // Assuming you store the token in AsyncStorage
         if (token) {
           // Verify the token by making a request to your Django backend
-          const response = await axios.get('http://192.168.54.177:8000/api/user/current/', {
+          const response = await axios.get('http://192.168.251.26:8000/api/user/current/', {
             headers: {
-              Authorization: `Bearer ${token}`,
-            },
+              Authorization: `Bearer ${token}`
+            }
           });
-
-          if (response.data) {
-            setIsLoggedIn(true);
-            setUser(response.data); // Set user data received from Django
-          } else {
-            setIsLoggedIn(false);
-            setUser(null);
-          }
-        } else {
-          setIsLoggedIn(false);
-          setUser(null);
+          setUser(response.data);
+          setIsLoggedIn(true);
         }
       } catch (error) {
-        console.log(error);
-        setIsLoggedIn(false);
-        setUser(null);
+        console.error("Error fetching user or bookings:", error);
       } finally {
         setIsLoading(false);
       }
@@ -45,16 +34,25 @@ const GlobalProvider = ({ children }) => {
     checkUserSession();
   }, []);
 
+  const getCurrentUser = async () => {
+    try {
+      const token = await AsyncStorage.getItem('access_token');
+      if (token) {
+        const response = await axios.get('http://192.168.251.26:8000/api/user/current/', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        return response.data;
+      }
+    } catch (error) {
+      console.error("Error fetching current user:", error);
+      throw error;
+    }
+  };
+
   return (
-    <GlobalContext.Provider
-      value={{
-        isLoggedIn,
-        setIsLoggedIn,
-        user,
-        setUser,
-        isLoading,
-      }}
-    >
+    <GlobalContext.Provider value={{ isLoggedIn, user, isLoading, getCurrentUser }}>
       {children}
     </GlobalContext.Provider>
   );
