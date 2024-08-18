@@ -14,3 +14,14 @@ pip install mysql-connector-python
 
 
 https://github.com/techwithtim/Django-React-Full-Stack-App/blob/main/backend/backend/settings.py
+
+
+(env) cosmah@cosmah:~/Desktop/pro/WasteManager/Backend/backend$ python manage.py createsuperuser
+Username: admin
+Email address: 123123
+Error: Enter a valid email address.
+Email address: jacfrost06@gmail.com
+Password: 
+Password (again): 
+This password is too short. It must contain at least 8 characters.
+This password is too common.
