@@ -7,7 +7,7 @@ import { Image } from "react-native";
 import FormField from "@/components/FormField";
 import CustomButtons from "@/components/CustomButtons";
 import { Link, router } from "expo-router";
-import { createUser, logout } from "@/lib/appwrite";
+import axios from "axios"; // Import axios
 
 const StyledText = styled(Text);
 const SafeAreaViewContainer = styled(SafeAreaView);
@@ -16,17 +16,14 @@ const StyledView = styled(View);
 const SLink = styled(Link);
 
 const SignUp = () => {
-  // Create user state field
   const [form, setForm] = useState({
     username: "",
     email: "",
     password: "",
   });
 
-  // Loading state
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // LOGIN FUNCTION
   const submit = async () => {
     if (!form.username || !form.email || !form.password) {
       Alert.alert("Error", "Please fill all the fields");
@@ -38,23 +35,30 @@ const SignUp = () => {
     setIsSubmitting(true);
 
     try {
-      // Trim email to remove any leading or trailing whitespace
-      const trimmedEmail = form.email.trim();
-
-      // Log only the relevant fields
-      console.log("Form data before submission:", {
+      console.log("Submitting form:", form); // Log form data
+    
+      const response = await axios.post('http://192.168.251.26:8000/api/user/register/', {
         username: form.username,
-        email: trimmedEmail,
+        email: form.email,
         password: form.password,
       });
-
-      // Logout any existing session
-      await logout();
-
-      const result = await createUser(trimmedEmail, form.password, form.username);
-      router.replace("/home");
+    
+      console.log("Response:", response); // Log response
+    
+      if (response.status === 201) {
+        Alert.alert("Success", "User registered successfully");
+        router.replace("/home"); // Navigate to home on success
+      }
     } catch (error) {
-      Alert.alert("Error", error.message);
+      console.error("Error:", error); // Log error
+      if (error.response) {
+        console.error("Error Response:", error.response); // Log error response
+      } else if (error.request) {
+        console.error("Error Request:", error.request); // Log error request
+      } else {
+        console.error("Error Message:", error.message); // Log error message
+      }
+      Alert.alert("Error", error.response?.data?.detail || "An error occurred");
     } finally {
       setIsSubmitting(false);
     }
@@ -106,7 +110,7 @@ const SignUp = () => {
 
           <StyledView className="justify-center pt-5 flex-row gap-2">
             <StyledText className="text-lg text-gray-100 font-pregular">
-              Have an account already ?
+              Have an account already?
             </StyledText>
             <SLink href="/sign-in" className="text-lg font-psemibold text-secondary">
               Sign In
