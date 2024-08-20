@@ -19,15 +19,16 @@ from django.urls import path
 from api.views import CreateUserView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.urls import include
-
+from api.views import CustomTokenObtainPairView, CurrentUserView, CreateUserView
 
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/user/register/",CreateUserView.as_view(), name="register"),
-    path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    #path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api-auth/", include("rest_framework.urls")),
-    path("api/", include("api.urls"))
+    path('api/user/login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/user/current/', CurrentUserView.as_view(), name='current_user'),
 ]

@@ -1,35 +1,25 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics
-from .serializers import UserSerializer, BookingSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Booking
+from rest_framework.response import Response
+from rest_framework.views import APIView  # Add this import
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import UserSerializer
 
+class CustomTokenObtainPairView(TokenObtainPairView):
+    permission_classes = (AllowAny,)
 
-# Create your views here.
-class BookingListCreate(generics.ListCreateAPIView):
-    serializer_class = BookingSerializer
+class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        user = self.request.user
-        return Booking.objects.filter(author=user)
-    
-    def perform_create(self, serializer):
-        if serializer.is_valid():
-            serializer.save(author=self.request.user)
-        else:
-            print(serializer.errors)
-
-
-class BookingDelete(generics.DestroyAPIView):
-    serializer_class = BookingSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        return Booking.objects.filter(author=user)
-
+    def get(self, request):
+        user = request.user
+        return Response({
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+        })
 
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()

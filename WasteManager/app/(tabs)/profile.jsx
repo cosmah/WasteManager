@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
-import { getCurrentUser, fetchBookings } from "@/lib/appwrite"; // Import necessary functions
+// import { getCurrentUser, fetchBookings } from "@/lib/appwrite"; // Import necessary functions
 import { styled } from "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";

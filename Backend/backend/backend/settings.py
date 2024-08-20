@@ -31,15 +31,20 @@ SECRET_KEY = 'django-insecure-+15p_=g-q(vy&)9bi^tu8m3uck29e5&+14zid6@3+ldfx&zd_d
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+# Security settings (adjust as necessary)
+DEBUG = True  # Make sure this is False in production
 
+ALLOWED_HOSTS = ['*']  # For development, you can allow all hosts. In production, specify your domain or IP.
+
+
+# JWT Authentication settings
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
-    ],
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
 }
 
 SIMPLE_JWT = {
@@ -60,6 +65,7 @@ INSTALLED_APPS = [
     'api',
     'rest_framework',
     'corsheaders',
+    'backend',
 ]
 
 MIDDLEWARE = [
@@ -149,3 +155,30 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ORIGIN_ALLOW_ALL = True
 COR_ALLOWS_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = [
+    'access-control-allow-origin',
+    'content-type',
+
+]
+
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'mysql.connector.django',
+        'NAME': 'wasteManager',  # Replace with your database name
+        'USER': 'root',                 # Default MySQL username
+        'PASSWORD': '',                 # Default MySQL password (leave empty if not set)
+        'HOST': 'localhost',
+        'PORT': '3306',                 # Default MySQL port
+    }
+}
+

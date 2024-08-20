@@ -7,7 +7,8 @@ import { Image } from "react-native";
 import FormField from "@/components/FormField";
 import CustomButtons from "@/components/CustomButtons";
 import { Link, router } from "expo-router";
-import { signIn, logout, getCurrentUser } from "@/lib/appwrite";
+import axios from "axios"; // Import axios
+import AsyncStorage from '@react-native-async-storage/async-storage'; // For storing tokens
 import { useGlobalContext } from "@/context/GlobalProvider";
 
 const StyledText = styled(Text);
@@ -17,8 +18,7 @@ const StyledView = styled(View);
 const SLink = styled(Link);
 
 const SignIn = () => {
-
-  const { setUser, setIsLogged } = useGlobalContext();
+  const { setUser, setIsLoggedIn } = useGlobalContext();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -27,28 +27,46 @@ const SignIn = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const submit = async () => {
-    if (form.email === "" || form.password ==="") {
+    if (form.email === "" || form.password === "") {
       Alert.alert("Error", "Please fill all the fields");
+      return; // Ensure to return to prevent further execution
     }
-
 
     setIsSubmitting(true);
 
     try {
       const trimmedEmail = form.email.trim();
       
-      // Logout any existing session
-      // await logout();
-      
-      await signIn(trimmedEmail, form.password);
-      const result = await getCurrentUser();
-      setUser(result);
-      setIsLoggedIn(true);
+      // Make API call to Django backend for login
+      const response = await axios.post('http://192.168.251.26:8000/api/user/login/', {
+        email: trimmedEmail,
+        password: form.password,
+        username: trimmedEmail, // Include the username field
+      });
+
+      // Assuming the response contains access and refresh tokens
+      const { access, refresh } = response.data;
+
+      // Store tokens in AsyncStorage
+      await AsyncStorage.setItem('access_token', access);
+      await AsyncStorage.setItem('refresh_token', refresh);
+
+      // Optionally, you can fetch user details here if needed
+      const userResponse = await axios.get('http://192.168.54.177:8000/api/users/current/', {
+        headers: {
+          Authorization: `Bearer ${access}`,
+        },
+      });
+
+      setUser(userResponse.data); // Set user data received from Django
+      setIsLoggedIn(true); // Update logged-in state
 
       Alert.alert("Success", "Logged in successfully");
-      router.replace("/home");
+      router.replace("/home"); // Navigate to home on success
     } catch (error) {
-      Alert.alert("Error", error.message);
+      console.error("Login error:", error); // Log the error for debugging
+      console.error("Error response data:", error.response?.data); // Log the response data
+      Alert.alert("Error", error.response?.data?.detail || "An error occurred");
     } finally {
       setIsSubmitting(false);
     }
@@ -81,6 +99,7 @@ const SignIn = () => {
             handleChangeText={(e) => setForm({ ...form, password: e })}
             otherStyles="mt-7"
             keyboardType="default"
+            secureTextEntry={true} // Ensure password is hidden
           />
           <CustomButtons
             title="Sign In"
@@ -91,7 +110,7 @@ const SignIn = () => {
 
           <StyledView className="justify-center pt-5 flex-row gap-2">
             <StyledText className="text-lg text-gray-100 font-pregular">
-              Don't have account ?
+              Don't have an account?
             </StyledText>
             <SLink href="/sign-up" className="text-lg font-psemibold text-secondary">
               Sign Up

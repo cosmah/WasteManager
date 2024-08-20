@@ -9,7 +9,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styled } from "nativewind";
-import { getCurrentUser } from "@/lib/appwrite";
+import { useGlobalContext } from '@/context/GlobalProvider';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import * as Location from "expo-location";
 
@@ -24,6 +24,8 @@ const Home = () => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
+  const { getCurrentUser } = useGlobalContext();
+
   useEffect(() => {
     const fetchUser = async () => {
       const user = await getCurrentUser();
@@ -33,7 +35,7 @@ const Home = () => {
     };
 
     fetchUser();
-  }, []);
+  }, [getCurrentUser]);
 
   useEffect(() => {
     (async () => {
