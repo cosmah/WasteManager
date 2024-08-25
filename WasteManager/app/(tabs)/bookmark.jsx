@@ -59,8 +59,6 @@ const Bookmark = () => {
   };
 
   const resetFields = () => {
-    setName("");
-    setEmail("");
     setPhone("");
     setAddress("");
     setServiceType("");
@@ -75,7 +73,7 @@ const Bookmark = () => {
   };
 
   const submit = async () => {
-    if (!name || !email || !phone || !address || !serviceType || !serviceFrequency || !wasteType || !wasteVolume || !emergencyContact) {
+    if (!phone || !address || !serviceType || !serviceFrequency || !wasteType || !wasteVolume || !emergencyContact) {
       Alert.alert("Error", "Please fill all the fields");
       return;
     }
@@ -91,8 +89,6 @@ const Bookmark = () => {
       const user = await getCurrentUser(); // Fetch the current user
 
       const bookingData = {
-        name,
-        email,
         phone,
         address,
         serviceType,
@@ -122,7 +118,7 @@ const Bookmark = () => {
             Book your service
           </StyledText>
           <StyledView>
-            <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
+            {/* <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
               <STextInput
                 className="flex-1"
                 placeholder="Name"
@@ -140,7 +136,7 @@ const Bookmark = () => {
                 style={styles.input}
                 keyboardType="email-address"
               />
-            </StyledView>
+            </StyledView> */}
             <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
               <STextInput
                 className="flex-1"

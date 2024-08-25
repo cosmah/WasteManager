@@ -50,14 +50,14 @@ const BookingDetails = () => {
         </StyledText>
       </StyledView>
       <StyledView style={styles.content} className="rounded-xl p-4">
-        <StyledView style={styles.bookingText}>
+        {/* <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Name:</Text>
           <Text>{booking.name}</Text>
         </StyledView>
         <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Email:</Text>
           <Text>{booking.email}</Text>
-        </StyledView>
+        </StyledView> */}
         <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Phone:</Text>
           <Text>{booking.phone}</Text>
