@@ -16,7 +16,7 @@ const GlobalProvider = ({ children }) => {
         const token = await AsyncStorage.getItem('access_token'); // Assuming you store the token in AsyncStorage
         if (token) {
           // Verify the token by making a request to your Django backend
-          const response = await axios.get('http://192.168.166.26:8000/api/user/current/', {
+          const response = await axios.get('http://192.168.196.26:8000/api/user/current/', {
             headers: {
               Authorization: `Bearer ${token}`
             }
@@ -37,7 +37,7 @@ const GlobalProvider = ({ children }) => {
   const getCurrentUser = async () => {
     try {
       const token = await AsyncStorage.getItem('access_token');// Assuming you store the token in AsyncStorage
-      const response = await axios.get("http://192.168.166.26:8000/api/user/current/", {
+      const response = await axios.get("http://192.168.196.26:8000/api/user/current/", {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -57,7 +57,7 @@ const GlobalProvider = ({ children }) => {
 
   const loginUser = async (email, password) => {
     try {
-      const response = await axios.post('http://192.168.166.26:8000/api/user/login/', {
+      const response = await axios.post('http://192.168.196.26:8000/api/user/login/', {
         email,
         password
       });
