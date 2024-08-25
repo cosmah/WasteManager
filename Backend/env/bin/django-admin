@@ -1,4 +1,4 @@
-#!/home/cosmah/Desktop/pro/WasteManager/Backend/env/bin/python3
+#!/home/cosmah/Desktop/projects/android/WasteManager/Backend/env/bin/python3
 # -*- coding: utf-8 -*-
 import re
 import sys
