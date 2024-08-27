@@ -22,9 +22,6 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
-
-
-
 class BookingSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False)
 
@@ -35,7 +32,7 @@ class BookingSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
-        return Booking(**validated_data)
+        return Booking.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         instance.user = self.context['request'].user
