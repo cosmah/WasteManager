@@ -24,7 +24,7 @@ const StyledPicker = styled(Picker);
 const StyledScrollView = styled(ScrollView);
 
 const Bookmark = () => {
-  const { getCurrentUser } = useGlobalContext(); // Use the context
+  const { getCurrentUser, createBooking } = useGlobalContext(); // Use the context
   const [time, setTime] = useState(new Date());
   const [date, setDate] = useState(new Date());
   const [phone, setPhone] = useState("");
@@ -52,11 +52,6 @@ const Bookmark = () => {
     }
   };
 
-  const validateEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(String(email).toLowerCase());
-  };
-
   const resetFields = () => {
     setPhone("");
     setAddress("");
@@ -74,12 +69,12 @@ const Bookmark = () => {
       Alert.alert("Error", "Please fill all the fields");
       return;
     }
-
+  
     setIsSubmitting(true);
-
+  
     try {
       const user = await getCurrentUser(); // Fetch the current user
-
+  
       const bookingData = {
         phone,
         address,
@@ -91,9 +86,9 @@ const Bookmark = () => {
         wasteVolume: parseFloat(wasteVolume), // Ensure wasteVolume is a double
         emergencyContact,
       };
-
+  
       const newDocument = await createBooking(bookingData); // Use createBooking function
-
+  
       Alert.alert("Success", "Service booked successfully!");
       resetFields(); // Reset fields after successful booking
     } catch (error) {

@@ -73,8 +73,41 @@ const GlobalProvider = ({ children }) => {
     }
   };
 
+  const createBooking = async (bookingData) => {
+    try {
+      const token = await AsyncStorage.getItem('access_token'); // Assuming you store the token in AsyncStorage
+      const response = await axios.post('http://192.168.127.211:8000/bookings/', bookingData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      if (response.status === 201) {
+        console.log("Booking created successfully:", response.data);
+        return response.data;
+      } else {
+        console.error("Unexpected response status:", response.status);
+        throw new Error(`Unexpected response status: ${response.status}`);
+      }
+    } catch (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error("Error response data:", error.response.data);
+        console.error("Error response status:", error.response.status);
+        console.error("Error response headers:", error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error("Error request data:", error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error("Error message:", error.message);
+      }
+      throw error;
+    }
+  };
+  
   return (
-    <GlobalContext.Provider value={{ isLoggedIn, user, isLoading, getCurrentUser, loginUser }}>
+    <GlobalContext.Provider value={{ isLoggedIn, user, isLoading, getCurrentUser, loginUser, createBooking }}>
       {children}
     </GlobalContext.Provider>
   );
