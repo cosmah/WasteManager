@@ -8,7 +8,7 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
-import { getCurrentUser, createBooking } from "@/lib/appwrite"; // Import necessary functions
+import { useGlobalContext } from '@/context/GlobalProvider'; // Adjust the path accordingly
 import { styled } from "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Picker } from "@react-native-picker/picker";
@@ -24,10 +24,9 @@ const StyledPicker = styled(Picker);
 const StyledScrollView = styled(ScrollView);
 
 const Bookmark = () => {
+  const { getCurrentUser } = useGlobalContext(); // Use the context
   const [time, setTime] = useState(new Date());
   const [date, setDate] = useState(new Date());
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [serviceType, setServiceType] = useState("");
@@ -65,8 +64,6 @@ const Bookmark = () => {
     setServiceFrequency("");
     setWasteType("");
     setWasteVolume("");
-    setSpecialHandling("");
-    setAccessInfo("");
     setEmergencyContact("");
     setDate(new Date());
     setTime(new Date());
@@ -75,11 +72,6 @@ const Bookmark = () => {
   const submit = async () => {
     if (!phone || !address || !serviceType || !serviceFrequency || !wasteType || !wasteVolume || !emergencyContact) {
       Alert.alert("Error", "Please fill all the fields");
-      return;
-    }
-
-    if (!validateEmail(email)) {
-      Alert.alert("Error", "Please enter a valid email address");
       return;
     }
 
@@ -110,6 +102,7 @@ const Bookmark = () => {
       setIsSubmitting(false);
     }
   };
+
   return (
     <StyledSafeAreaView className="bg-primary h-full">
       <StyledScrollView contentContainerStyle={styles.scrollViewContent}>
@@ -118,25 +111,6 @@ const Bookmark = () => {
             Book your service
           </StyledText>
           <StyledView>
-            {/* <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
-              <STextInput
-                className="flex-1"
-                placeholder="Name"
-                value={name}
-                onChangeText={setName}
-                style={styles.input}
-              />
-            </StyledView>
-            <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
-              <STextInput
-                className="flex-1"
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-                style={styles.input}
-                keyboardType="email-address"
-              />
-            </StyledView> */}
             <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
               <STextInput
                 className="flex-1"

@@ -38,7 +38,7 @@ const SignIn = () => {
       const trimmedEmail = form.email.trim();
       
       // Make API call to Django backend for login
-      const response = await axios.post('http://192.168.196.26:8000/api/user/login/', {
+      const response = await axios.post('http://192.168.127.211:8000/api/user/login/', {
         email: trimmedEmail,
         password: form.password,
         username: trimmedEmail, // Include the username field
@@ -52,7 +52,7 @@ const SignIn = () => {
       await AsyncStorage.setItem('refresh_token', refresh);
 
       // Optionally, you can fetch user details here if needed
-      const userResponse = await axios.get('http://192.168.196.26:8000/api/user/current/', {
+      const userResponse = await axios.get('http://192.168.127.211:8000/api/user/current/', {
         headers: {
           Authorization: `Bearer ${access}`,
         },
