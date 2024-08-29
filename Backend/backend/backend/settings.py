@@ -175,10 +175,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'mysql.connector.django',
         'NAME': 'wasteManager',  # Replace with your database name
-        'USER': 'root',                 # Default MySQL username
-        'PASSWORD': '',                 # Default MySQL password (leave empty if not set)
-        'HOST': 'localhost',
+        'USER': 'root',       # Replace with your MySQL username
+        'PASSWORD': '',   # Replace with your MySQL password
+        'HOST': '192.168.100.22',      # Use your local machine's IP address
         'PORT': '3306',                 # Default MySQL port
     }
 }
-
+\
