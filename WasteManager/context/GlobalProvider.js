@@ -1,9 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios"; // Import axios for API calls
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwtDecode from 'jwt-decode';
 
 const GlobalContext = createContext();
 export const useGlobalContext = () => useContext(GlobalContext);
+
+const API_BASE_URL = 'http://192.168.9.211:8000';
 
 const GlobalProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -11,103 +14,117 @@ const GlobalProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const checkUserSession = async () => {
-      try {
-        const token = await AsyncStorage.getItem('access_token'); // Assuming you store the token in AsyncStorage
-        if (token) {
-          // Verify the token by making a request to your Django backend
-          const response = await axios.get('http://192.168.127.211:8000/api/user/current/', {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          });
-          setUser(response.data);
-          setIsLoggedIn(true);
-        }
-      } catch (error) {
-        console.error("Error fetching user or bookings:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     checkUserSession();
   }, []);
 
-  const getCurrentUser = async () => {
+  const checkUserSession = async () => {
     try {
-      const token = await AsyncStorage.getItem('access_token');// Assuming you store the token in AsyncStorage
-      const response = await axios.get("http://192.168.127.211:8000/api/user/current/", {
-        headers: {
-          Authorization: `Bearer ${token}`
+      const token = await AsyncStorage.getItem('access_token');
+      if (token) {
+        if (isTokenValid(token)) {
+          await fetchCurrentUser(token);
+        } else {
+          await handleTokenRefresh();
         }
-      });
-      if (response.status === 200) {
-        console.log("Current user data:", response.data);
-        return response.data;
-      } else {
-        console.error("Unexpected response status:", response.status);
-        throw new Error(`Unexpected response status: ${response.status}`);
       }
     } catch (error) {
-      console.error("Error fetching current user:", error);
-      throw error;
+      console.error("Session check failed:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const isTokenValid = (token) => {
+    try {
+      const decodedToken = jwtDecode(token);
+      return decodedToken.exp > Date.now() / 1000;
+    } catch {
+      return false;
+    }
+  };
+
+  const handleTokenRefresh = async () => {
+    try {
+      const refreshToken = await AsyncStorage.getItem('refresh_token');
+      console.log("Attempting to refresh token with:", `${API_BASE_URL}/api/user/refresh/`);
+      
+      const response = await axios.post(`${API_BASE_URL}/api/user/refresh/`, { refresh: refreshToken });
+      console.log("Token refresh response:", response.data);
+      
+      await AsyncStorage.setItem('access_token', response.data.access);
+      await fetchCurrentUser(response.data.access);
+    } catch (error) {
+      console.error("Token refresh failed:", error);
+      if (error.response) {
+        console.error("Error response data:", error.response.data);
+        console.error("Error response status:", error.response.status);
+        console.error("Error response headers:", error.response.headers);
+      } else if (error.request) {
+        console.error("Error request:", error.request);
+      } else {
+        console.error("Error message:", error.message);
+      }
+      logout();
+    }
+  };
+
+  const fetchCurrentUser = async (token) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/user/current/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUser(response.data);
+      setIsLoggedIn(true);
+    } catch (error) {
+      console.error("Fetching current user failed:", error);
+      logout();
     }
   };
 
   const loginUser = async (email, password) => {
     try {
-      const response = await axios.post('http://192.168.127.211:8000/api/user/login/', {
-        email,
-        password
-      });
-      const { access, refresh } = response.data;
+      const response = await axios.post(`${API_BASE_URL}/api/user/login/`, { email, password });
+      const { access, refresh, user: userData } = response.data;
       await AsyncStorage.setItem('access_token', access);
       await AsyncStorage.setItem('refresh_token', refresh);
-      setUser(response.data.user);
+      setUser(userData);
       setIsLoggedIn(true);
-      console.log("Login successful:", response.data);
+      return userData;
     } catch (error) {
-      console.error("Login error:", error);
+      console.error("Login failed:", error);
       throw error;
     }
   };
 
+  const logout = async () => {
+    await AsyncStorage.removeItem('access_token');
+    await AsyncStorage.removeItem('refresh_token');
+    setUser(null);
+    setIsLoggedIn(false);
+  };
+
   const createBooking = async (bookingData) => {
     try {
-      const token = await AsyncStorage.getItem('access_token'); // Assuming you store the token in AsyncStorage
-      const response = await axios.post('http://192.168.127.211:8000/bookings/', bookingData, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+      const token = await AsyncStorage.getItem('access_token');
+      const response = await axios.post(`${API_BASE_URL}/bookings/`, bookingData, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      if (response.status === 201) {
-        console.log("Booking created successfully:", response.data);
-        return response.data;
-      } else {
-        console.error("Unexpected response status:", response.status);
-        throw new Error(`Unexpected response status: ${response.status}`);
-      }
+      return response.data;
     } catch (error) {
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.error("Error response data:", error.response.data);
-        console.error("Error response status:", error.response.status);
-        console.error("Error response headers:", error.response.headers);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.error("Error request data:", error.request);
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.error("Error message:", error.message);
-      }
+      console.error("Creating booking failed:", error);
       throw error;
     }
   };
-  
+
   return (
-    <GlobalContext.Provider value={{ isLoggedIn, user, isLoading, getCurrentUser, loginUser, createBooking }}>
+    <GlobalContext.Provider value={{
+      isLoggedIn,
+      user,
+      isLoading,
+      loginUser,
+      logout,
+      createBooking,
+    }}>
       {children}
     </GlobalContext.Provider>
   );
