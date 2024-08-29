@@ -177,7 +177,7 @@ DATABASES = {
         'NAME': 'wasteManager',  # Replace with your database name
         'USER': 'root',       # Replace with your MySQL username
         'PASSWORD': '',   # Replace with your MySQL password
-        'HOST': '192.168.100.22',      # Use your local machine's IP address
+        'HOST': 'localhost',      # Use your local machine's IP address
         'PORT': '3306',                 # Default MySQL port
     }
 }
