@@ -1,14 +1,15 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwtDecode from 'jwt-decode';
 
 const GlobalContext = createContext();
+
 export const useGlobalContext = () => useContext(GlobalContext);
 
 const API_BASE_URL = 'http://192.168.9.211:8000';
 
-const GlobalProvider = ({ children }) => {
+export const GlobalProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,9 +47,9 @@ const GlobalProvider = ({ children }) => {
   const handleTokenRefresh = async () => {
     try {
       const refreshToken = await AsyncStorage.getItem('refresh_token');
-      console.log("Attempting to refresh token with:", `${API_BASE_URL}/api/user/refresh/`);
+      console.log("Attempting to refresh token with:", `${API_BASE_URL}/api/token/refresh/`);
       
-      const response = await axios.post(`${API_BASE_URL}/api/user/refresh/`, { refresh: refreshToken });
+      const response = await axios.post(`${API_BASE_URL}/api/token/refresh/`, { refresh: refreshToken });
       console.log("Token refresh response:", response.data);
       
       await AsyncStorage.setItem('access_token', response.data.access);
@@ -83,7 +84,11 @@ const GlobalProvider = ({ children }) => {
 
   const loginUser = async (email, password) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/user/login/`, { email, password });
+      const response = await axios.post(`${API_BASE_URL}/api/user/login/`, { 
+        email, 
+        password,
+        username: email // Include if your backend expects it
+      });
       const { access, refresh, user: userData } = response.data;
       await AsyncStorage.setItem('access_token', access);
       await AsyncStorage.setItem('refresh_token', refresh);
@@ -103,19 +108,6 @@ const GlobalProvider = ({ children }) => {
     setIsLoggedIn(false);
   };
 
-  const createBooking = async (bookingData) => {
-    try {
-      const token = await AsyncStorage.getItem('access_token');
-      const response = await axios.post(`${API_BASE_URL}/bookings/`, bookingData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Creating booking failed:", error);
-      throw error;
-    }
-  };
-
   return (
     <GlobalContext.Provider value={{
       isLoggedIn,
@@ -123,7 +115,7 @@ const GlobalProvider = ({ children }) => {
       isLoading,
       loginUser,
       logout,
-      createBooking,
+      handleTokenRefresh,
     }}>
       {children}
     </GlobalContext.Provider>

@@ -24,18 +24,18 @@ const Home = () => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
-  const { getCurrentUser } = useGlobalContext();
+  const { fetchCurrentUser } = useGlobalContext();
 
   useEffect(() => {
     const fetchUser = async () => {
-      const user = await getCurrentUser();
+      const user = await fetchCurrentUser();
       if (user) {
         setUsername(user.username);
       }
     };
 
     fetchUser();
-  }, [getCurrentUser]);
+  }, [fetchCurrentUser]);
 
   useEffect(() => {
     (async () => {

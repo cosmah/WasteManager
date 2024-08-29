@@ -7,9 +7,8 @@ import { Image } from "react-native";
 import FormField from "@/components/FormField";
 import CustomButtons from "@/components/CustomButtons";
 import { Link, router } from "expo-router";
-import axios from "axios"; // Import axios
-import AsyncStorage from '@react-native-async-storage/async-storage'; // For storing tokens
 import { useGlobalContext } from "@/context/GlobalProvider";
+
 
 const StyledText = styled(Text);
 const SafeAreaViewContainer = styled(SafeAreaView);
@@ -18,7 +17,7 @@ const StyledView = styled(View);
 const SLink = styled(Link);
 
 const SignIn = () => {
-  const { setUser, setIsLoggedIn } = useGlobalContext();
+  const { loginUser } = useGlobalContext();
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -29,43 +28,18 @@ const SignIn = () => {
   const submit = async () => {
     if (form.email === "" || form.password === "") {
       Alert.alert("Error", "Please fill all the fields");
-      return; // Ensure to return to prevent further execution
+      return;
     }
 
     setIsSubmitting(true);
 
     try {
       const trimmedEmail = form.email.trim();
-      
-      // Make API call to Django backend for login
-      const response = await axios.post('http://192.168.9.211:8000/api/user/login/', {
-        email: trimmedEmail,
-        password: form.password,
-        username: trimmedEmail, // Include the username field
-      });
-
-      // Assuming the response contains access and refresh tokens
-      const { access, refresh } = response.data;
-
-      // Store tokens in AsyncStorage
-      await AsyncStorage.setItem('access_token', access);
-      await AsyncStorage.setItem('refresh_token', refresh);
-
-      // Optionally, you can fetch user details here if needed
-      const userResponse = await axios.get('http://192.168.9.211:8000/api/user/current/', {
-        headers: {
-          Authorization: `Bearer ${access}`,
-        },
-      });
-
-      setUser(userResponse.data); // Set user data received from Django
-      setIsLoggedIn(true); // Update logged-in state
-
+      await loginUser(trimmedEmail, form.password);
       Alert.alert("Success", "Logged in successfully");
-      router.replace("/home"); // Navigate to home on success
+      router.replace("/home");
     } catch (error) {
-      console.error("Login error:", error); // Log the error for debugging
-      console.error("Error response data:", error.response?.data); // Log the response data
+      console.error("Login error:", error);
       Alert.alert("Error", error.response?.data?.detail || "An error occurred");
     } finally {
       setIsSubmitting(false);
