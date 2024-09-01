@@ -20,22 +20,10 @@ const StyledImage = styled(Image);
 const StyledTouchableOpacity = styled(TouchableOpacity);
 
 const Home = () => {
-  const [username, setUsername] = useState("");
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
-  const { fetchCurrentUser } = useGlobalContext();
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const user = await fetchCurrentUser();
-      if (user) {
-        setUsername(user.username);
-      }
-    };
-
-    fetchUser();
-  }, [fetchCurrentUser]);
+  const { user, isLoading } = useGlobalContext();
 
   useEffect(() => {
     (async () => {
@@ -57,13 +45,23 @@ const Home = () => {
     locationText = `Location: ${location.coords.latitude}, ${location.coords.longitude}`;
   }
 
+  if (isLoading) {
+    return (
+      <StyledSafeAreaView className="bg-primary h-full">
+        <StyledText className="text-2xl font-psemibold text-secondary">
+          Loading...
+        </StyledText>
+      </StyledSafeAreaView>
+    );
+  }
+
   return (
     <StyledSafeAreaView className="bg-primary h-full">
       <StyledView style={{ flex: 1 }}>
         <StyledView className="flex-row justify-between items-center mb-6 p-5">
           <StyledView>
             <StyledText className="text-2xl font-psemibold text-secondary">
-              Hi, {username ? `${username}` : "Loading..."}
+              Hi, {user ? user.username : "Guest"}
             </StyledText>
             <StyledText className="text-sm text-gray-100">
               {locationText}
