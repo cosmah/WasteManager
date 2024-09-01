@@ -60,3 +60,10 @@ class BookingViewSet(viewsets.ModelViewSet):
         if action in ['partial_update', 'update']:
             kwargs.pop('pk', None)
         return kwargs
+
+    def list(self, request):
+        queryset = self.queryset.filter(user=request.user)
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+  

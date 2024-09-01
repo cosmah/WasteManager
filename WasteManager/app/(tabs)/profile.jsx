@@ -1,41 +1,48 @@
 import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
-// import { getCurrentUser, fetchBookings } from "@/lib/appwrite"; // Import necessary functions
 import { styled } from "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { useGlobalContext } from '@/context/GlobalProvider';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const StyledSafeAreaView = styled(SafeAreaView);
 const StyledView = styled(View);
 const StyledText = styled(Text);
 const StyledImage = styled(Image);
 
+const API_BASE_URL = 'http://192.168.178.211:8000';
+
 const Profile = () => {
-  const [user, setUser] = useState(null);
+  const { user, isLoading } = useGlobalContext();
   const [bookings, setBookings] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
-    const fetchUserAndBookings = async () => {
-      try {
-        const currentUser = await getCurrentUser();
-        console.log("Current User:", currentUser); // Log current user
-        setUser(currentUser);
-
-        if (currentUser && currentUser.email) {
-          const userBookings = await fetchBookings(currentUser.email);
-          console.log("Bookings:", userBookings); // Log bookings
-          setBookings(userBookings);
+    const fetchBookings = async () => {
+      if (user) {
+        try {
+          const token = await AsyncStorage.getItem('access_token');
+          const response = await axios.get(`${API_BASE_URL}/bookings/`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          console.log("Bookings:", response.data);
+          setBookings(response.data);
+        } catch (error) {
+          console.error("Error fetching bookings:", error);
+          if (error.response) {
+            console.error("Error data:", error.response.data);
+            console.error("Error status:", error.response.status);
+          }
         }
-      } catch (error) {
-        console.error("Error fetching user or bookings:", error);
       }
     };
 
-    fetchUserAndBookings();
-  }, []);
+    fetchBookings();
+  }, [user]);
 
-  if (!user) {
+  if (isLoading || !user) {
     return <Text>Loading...</Text>;
   }
 
@@ -68,17 +75,21 @@ const Profile = () => {
         >
           <StyledView className="flex-row justify-around mt-5">
             <ScrollView>
-              {bookings.map((booking) => (
-                <TouchableOpacity
-                  key={booking.$id}
-                  style={styles.bookingItem}
-                  onPress={() => router.push(`/views/bookingDetails?id=${booking.$id}`)}
-                >
-                  <StyledText style={styles.bookingText}>Service Type: {booking.serviceType}</StyledText>
-                  <StyledText style={styles.bookingText}>Date: {new Date(booking.pickupDate).toLocaleDateString()}</StyledText>
-                  <StyledText style={styles.bookingText}>Time: {new Date(booking.pickupTime).toLocaleTimeString()}</StyledText>
-                </TouchableOpacity>
-              ))}
+              {bookings.length > 0 ? (
+                bookings.map((booking) => (
+                  <TouchableOpacity
+                    key={booking.id}
+                    style={styles.bookingItem}
+                    onPress={() => router.push(`/views/bookingDetails?id=${booking.id}`)}
+                  >
+                    <StyledText style={styles.bookingText}>Service Type: {booking.serviceType}</StyledText>
+                    <StyledText style={styles.bookingText}>Date: {new Date(booking.pickupDate).toLocaleDateString()}</StyledText>
+                    <StyledText style={styles.bookingText}>Time: {new Date(booking.pickupTime).toLocaleTimeString()}</StyledText>
+                  </TouchableOpacity>
+                ))
+              ) : (
+                <StyledText style={styles.noBookingsText}>No bookings found.</StyledText>
+              )}
             </ScrollView>
           </StyledView>
         </StyledView>
@@ -124,5 +135,11 @@ const styles = StyleSheet.create({
   bookingText: {
     fontSize: 16,
     color: "#000",
+  },
+  noBookingsText: {
+    fontSize: 16,
+    color: "#fff",
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
