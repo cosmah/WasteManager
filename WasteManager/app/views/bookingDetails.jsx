@@ -76,31 +76,31 @@ const BookingDetails = () => {
         </StyledView>
         <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Service Type:</Text>
-          <Text>{booking.serviceType}</Text>
+          <Text>{booking.service_type}</Text>
         </StyledView>
         <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Service Frequency:</Text>
-          <Text>{booking.serviceFrequency}</Text>
+          <Text>{booking.service_frequency}</Text>
         </StyledView>
         <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Waste Type:</Text>
-          <Text>{booking.wasteType}</Text>
+          <Text>{booking.waste_type}</Text>
         </StyledView>
         <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Waste Volume:</Text>
-          <Text>{booking.wasteVolume}</Text>
+          <Text>{booking.waste_volume}</Text>
         </StyledView>
         <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Emergency Contact:</Text>
-          <Text>{booking.emergencyContact}</Text>
+          <Text>{booking.emergency_contact}</Text>
         </StyledView>
         <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Date:</Text>
-          <Text>{new Date(booking.pickupDate).toLocaleDateString()}</Text>
+          <Text>{new Date(booking.pickup_date).toLocaleDateString()}</Text>
         </StyledView>
         <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Time:</Text>
-          <Text>{new Date(booking.pickupTime).toLocaleTimeString()}</Text>
+          <Text>{new Date(booking.pickup_time).toLocaleTimeString()}</Text>
         </StyledView>
       </StyledView>
     </StyledSafeAreaView>

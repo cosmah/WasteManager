@@ -47,14 +47,14 @@ const Bookmark = () => {
   const onChangeDate = useCallback((event, selectedDate) => {
     setShowDatePicker(false);
     if (selectedDate) {
-      handleInputChange('date', selectedDate);
+      handleInputChange('pickup_date', selectedDate);
     }
   }, [handleInputChange]);
 
   const onChangeTime = useCallback((event, selectedTime) => {
     setShowTimePicker(false);
     if (selectedTime) {
-      handleInputChange('time', selectedTime);
+      handleInputChange('pickup_time', selectedTime);
     }
   }, [handleInputChange]);
 
@@ -62,13 +62,13 @@ const Bookmark = () => {
     setFormData({
       phone: "",
       address: "",
-      serviceType: "",
-      serviceFrequency: "",
-      date: new Date(),
-      time: new Date(),
-      wasteType: "",
-      wasteVolume: "",
-      emergencyContact: "",
+      service_type: "",
+      service_frequency: "",
+      pickup_date: new Date(),
+      pickup_time: new Date(),
+      waste_type: "",
+      waste_volume: "",
+      emergency_contact: "",
     });
   }, []);
 
@@ -178,12 +178,12 @@ const Bookmark = () => {
                   className="text-gray-500"
                   onPress={() => setShowDatePicker(true)}
                 >
-                  Select Date: {formData.pickup_date.toDateString()}
+                  Select Date: {formData.pickup_date ? formData.pickup_date.toDateString() : "Select a date"}
                 </StyledText>
                 {showDatePicker && (
                   <DateTimePicker
                     testID="dateTimePicker"
-                    value={formData.pickup_date}
+                    value={formData.pickup_date || new Date()}
                     mode={"date"}
                     display="default"
                     onChange={onChangeDate}
@@ -195,12 +195,12 @@ const Bookmark = () => {
                   className="text-gray-500"
                   onPress={() => setShowTimePicker(true)}
                 >
-                  Select Time: {formData.pickup_time.toLocaleTimeString()}
+                  Select Time: {formData.pickup_time ? formData.pickup_time.toLocaleTimeString() : "Select a time"}
                 </StyledText>
                 {showTimePicker && (
                   <DateTimePicker
                     testID="timePicker"
-                    value={formData.pickup_time}
+                    value={formData.pickup_time || new Date()}
                     mode={"time"}
                     display="default"
                     onChange={onChangeTime}
