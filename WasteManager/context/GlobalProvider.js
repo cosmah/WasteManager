@@ -108,18 +108,46 @@ export const GlobalProvider = ({ children }) => {
     setIsLoggedIn(false);
   };
 
-  return (
-    <GlobalContext.Provider value={{
-      isLoggedIn,
-      user,
-      isLoading,
-      loginUser,
-      logout,
-      handleTokenRefresh,
-    }}>
-      {children}
-    </GlobalContext.Provider>
-  );
+// Add the createBooking function
+const createBooking = async (bookingData) => {
+  try {
+    const token = await AsyncStorage.getItem('access_token');
+    if (!token) {
+      throw new Error("No access token found");
+    }
+
+    // Update the URL to match your Django URL configuration
+    const response = await axios.post(`${API_BASE_URL}/bookings/`, bookingData, {
+      headers: { 
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Creating booking failed:", error);
+    if (error.response) {
+      console.error("Error response:", error.response.data);
+      console.error("Status code:", error.response.status);
+    }
+    throw error;
+  }
+};
+
+return (
+  <GlobalContext.Provider value={{
+    isLoggedIn,
+    user,
+    isLoading,
+    loginUser,
+    logout,
+    handleTokenRefresh,
+    createBooking, // Add createBooking to the context value
+  }}>
+    {children}
+  </GlobalContext.Provider>
+);
 };
 
 export default GlobalProvider;

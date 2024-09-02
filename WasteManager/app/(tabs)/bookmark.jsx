@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   StyleSheet,
   Text,
   View,
-  Image,
   TextInput,
   Alert,
   ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
-import { useGlobalContext } from '@/context/GlobalProvider'; // Adjust the path accordingly
+import { useGlobalContext } from '@/context/GlobalProvider';
 import { styled } from "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Picker } from "@react-native-picker/picker";
@@ -18,227 +19,210 @@ import CustomButtons from "@/components/CustomButtons";
 const StyledSafeAreaView = styled(SafeAreaView);
 const StyledView = styled(View);
 const StyledText = styled(Text);
-const StyledImage = styled(Image);
 const STextInput = styled(TextInput);
 const StyledPicker = styled(Picker);
 const StyledScrollView = styled(ScrollView);
 
 const Bookmark = () => {
-  const { getCurrentUser, createBooking } = useGlobalContext(); // Use the context
-  const [time, setTime] = useState(new Date());
-  const [date, setDate] = useState(new Date());
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [serviceType, setServiceType] = useState("");
-  const [serviceFrequency, setServiceFrequency] = useState("");
+  const { user, createBooking } = useGlobalContext();
+  const [formData, setFormData] = useState({
+    phone: "",
+    address: "",
+    service_type: "",
+    service_frequency: "",
+    pickup_date: new Date(),
+    pickup_time: new Date(),
+    waste_type: "",
+    waste_volume: "",
+    emergency_contact: "",
+  });
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [wasteType, setWasteType] = useState("");
-  const [wasteVolume, setWasteVolume] = useState("");
-  const [emergencyContact, setEmergencyContact] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onChangeDate = (event, selectedDate) => {
-    setShowDatePicker(false); // Close the date picker after selection
+  const handleInputChange = useCallback((name, value) => {
+    setFormData(prevData => ({ ...prevData, [name]: value }));
+  }, []);
+
+  const onChangeDate = useCallback((event, selectedDate) => {
+    setShowDatePicker(false);
     if (selectedDate) {
-      setDate(selectedDate);
+      handleInputChange('date', selectedDate);
     }
-  };
+  }, [handleInputChange]);
 
-  const onChangeTime = (event, selectedTime) => {
-    setShowTimePicker(false); // Close the time picker after selection
+  const onChangeTime = useCallback((event, selectedTime) => {
+    setShowTimePicker(false);
     if (selectedTime) {
-      setTime(selectedTime);
+      handleInputChange('time', selectedTime);
     }
-  };
+  }, [handleInputChange]);
 
-  const resetFields = () => {
-    setPhone("");
-    setAddress("");
-    setServiceType("");
-    setServiceFrequency("");
-    setWasteType("");
-    setWasteVolume("");
-    setEmergencyContact("");
-    setDate(new Date());
-    setTime(new Date());
-  };
+  const resetFields = useCallback(() => {
+    setFormData({
+      phone: "",
+      address: "",
+      serviceType: "",
+      serviceFrequency: "",
+      date: new Date(),
+      time: new Date(),
+      wasteType: "",
+      wasteVolume: "",
+      emergencyContact: "",
+    });
+  }, []);
 
-  const submit = async () => {
-    if (!phone || !address || !serviceType || !serviceFrequency || !wasteType || !wasteVolume || !emergencyContact) {
-      Alert.alert("Error", "Please fill all the fields");
-      return;
+  const validateForm = useCallback(() => {
+    const requiredFields = ['phone', 'address', 'service_type', 'service_frequency', 'waste_type', 'waste_volume', 'emergency_contact'];
+    const emptyFields = requiredFields.filter(field => !formData[field]);
+    
+    if (emptyFields.length > 0) {
+      Alert.alert("Error", `Please fill in the following fields: ${emptyFields.join(', ')}`);
+      return false;
     }
-  
+    return true;
+  }, [formData]);
+
+  const submit = useCallback(async () => {
+    if (!validateForm()) return;
+    
     setIsSubmitting(true);
-  
     try {
-      const user = await getCurrentUser(); // Fetch the current user
-  
+      if (!user) {
+        throw new Error("User not logged in");
+      }
       const bookingData = {
-        phone,
-        address,
-        serviceType,
-        serviceFrequency,
-        pickupDate: date.toISOString(), // Ensure pickupDate is included
-        pickupTime: time.toISOString(), // Ensure pickupTime is included
-        wasteType,
-        wasteVolume: parseFloat(wasteVolume), // Ensure wasteVolume is a double
-        emergencyContact,
+        ...formData,
+        pickup_date: formData.pickup_date.toISOString().split('T')[0], // Format as YYYY-MM-DD
+        pickup_time: formData.pickup_time.toTimeString().split(' ')[0], // Format as HH:MM:SS
+        waste_volume: parseFloat(formData.waste_volume),
       };
-  
-      const newDocument = await createBooking(bookingData); // Use createBooking function
-  
+      await createBooking(bookingData);
       Alert.alert("Success", "Service booked successfully!");
-      resetFields(); // Reset fields after successful booking
+      resetFields();
     } catch (error) {
-      Alert.alert("Error", error.message);
+      Alert.alert("Error", error.response?.data ? JSON.stringify(error.response.data) : error.message);
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [formData, user, createBooking, validateForm, resetFields]);
+
+  const renderInputField = useCallback((placeholder, name, keyboardType = 'default') => (
+    <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
+      <STextInput
+        className="flex-1"
+        placeholder={placeholder}
+        value={formData[name]}
+        onChangeText={(text) => handleInputChange(name, text)}
+        style={styles.input}
+        keyboardType={keyboardType}
+      />
+    </StyledView>
+  ), [formData, handleInputChange]);
+
+  const renderPicker = useCallback((placeholder, name, items) => (
+    <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
+      <StyledPicker
+        selectedValue={formData[name]}
+        onValueChange={(itemValue) => handleInputChange(name, itemValue)}
+        style={styles.picker}
+      >
+        <Picker.Item label={placeholder} value="" />
+        {items.map((item) => (
+          <Picker.Item key={item.value} label={item.label} value={item.value} />
+        ))}
+      </StyledPicker>
+    </StyledView>
+  ), [formData, handleInputChange]);
+
+  if (!user) {
+    return (
+      <StyledSafeAreaView className="bg-primary h-full">
+        <StyledView className="p-5">
+          <StyledText className="text-2xl font-psemibold text-secondary">
+            Please log in to book a service
+          </StyledText>
+        </StyledView>
+      </StyledSafeAreaView>
+    );
+  }
 
   return (
     <StyledSafeAreaView className="bg-primary h-full">
-      <StyledScrollView contentContainerStyle={styles.scrollViewContent}>
-        <StyledView className="p-5">
-          <StyledText className="p-5 text-2xl font-psemibold text-secondary">
-            Book your service
-          </StyledText>
-          <StyledView>
-            <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
-              <STextInput
-                className="flex-1"
-                placeholder="Phone"
-                value={phone}
-                onChangeText={setPhone}
-                style={styles.input}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <StyledScrollView contentContainerStyle={styles.scrollViewContent}>
+          <StyledView className="p-5">
+            <StyledText className="p-5 text-2xl font-psemibold text-secondary">
+              Book your service
+            </StyledText>
+            <StyledView>
+              {renderInputField("Phone", "phone", "phone-pad")}
+              {renderInputField("Address", "address")}
+              {renderPicker("Select Service Type", "service_type", [
+                { label: "Regular Waste Pickup", value: "regular_pickup" },
+                { label: "Bulk Item Collection", value: "bulk_collection" },
+                { label: "Hazardous Waste Disposal", value: "hazardous_disposal" },
+                { label: "Recycling Services", value: "recycling" },
+              ])}
+              {renderPicker("Select Service Frequency", "service_frequency", [
+                { label: "One-time", value: "one_time" },
+                { label: "Daily", value: "daily" },
+                { label: "Weekly", value: "weekly" },
+                { label: "Monthly", value: "monthly" },
+              ])}
+              <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
+                <StyledText
+                  className="text-gray-500"
+                  onPress={() => setShowDatePicker(true)}
+                >
+                  Select Date: {formData.pickup_date.toDateString()}
+                </StyledText>
+                {showDatePicker && (
+                  <DateTimePicker
+                    testID="dateTimePicker"
+                    value={formData.pickup_date}
+                    mode={"date"}
+                    display="default"
+                    onChange={onChangeDate}
+                  />
+                )}
+              </StyledView>
+              <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
+                <StyledText
+                  className="text-gray-500"
+                  onPress={() => setShowTimePicker(true)}
+                >
+                  Select Time: {formData.pickup_time.toLocaleTimeString()}
+                </StyledText>
+                {showTimePicker && (
+                  <DateTimePicker
+                    testID="timePicker"
+                    value={formData.pickup_time}
+                    mode={"time"}
+                    display="default"
+                    onChange={onChangeTime}
+                  />
+                )}
+              </StyledView>
+              {renderPicker("Select the waste type", "waste_type", [
+                { label: "Organic Waste", value: "organic" },
+                { label: "Synthetic Waste", value: "synthetic" },
+              ])}
+              {renderInputField("Waste Volume", "waste_volume", "numeric")}
+              {renderInputField("Emergency Contact", "emergency_contact", "phone-pad")}
+              <CustomButtons
+                title="Book a Pick-Up"
+                handlePress={submit}
+                containerStyle={[styles.buttonContainer, { marginTop: 7 }]}
+                isLoading={isSubmitting}
               />
             </StyledView>
-            <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
-              <STextInput
-                className="flex-1"
-                placeholder="Address"
-                value={address}
-                onChangeText={setAddress}
-                style={styles.input}
-              />
-            </StyledView>
-            <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
-              <StyledPicker
-                selectedValue={serviceType}
-                onValueChange={(itemValue) => setServiceType(itemValue)}
-                style={styles.picker}
-              >
-                <Picker.Item label="Select Service Type" value="" />
-                <Picker.Item
-                  label="Regular Waste Pickup"
-                  value="regular_pickup"
-                />
-                <Picker.Item
-                  label="Bulk Item Collection"
-                  value="bulk_collection"
-                />
-                <Picker.Item
-                  label="Hazardous Waste Disposal"
-                  value="hazardous_disposal"
-                />
-                <Picker.Item label="Recycling Services" value="recycling" />
-              </StyledPicker>
-            </StyledView>
-            <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
-              <StyledPicker
-                selectedValue={serviceFrequency}
-                onValueChange={(itemValue) => setServiceFrequency(itemValue)}
-                style={styles.picker}
-              >
-                <Picker.Item label="Select Service Frequency" value="" />
-                <Picker.Item label="One-time" value="one_time" />
-                <Picker.Item label="Daily" value="daily" />
-                <Picker.Item label="Weekly" value="weekly" />
-                <Picker.Item label="Monthly" value="monthly" />
-              </StyledPicker>
-            </StyledView>
-            <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
-              <StyledText
-                className="text-gray-500"
-                onPress={() => setShowDatePicker(true)}
-              >
-                Select Date: {date.toDateString()}
-              </StyledText>
-              {showDatePicker && (
-                <DateTimePicker
-                  testID="dateTimePicker"
-                  value={date}
-                  mode={"date"}
-                  display="default"
-                  onChange={onChangeDate}
-                />
-              )}
-            </StyledView>
-            <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
-              <StyledText
-                className="text-gray-500"
-                onPress={() => setShowTimePicker(true)}
-              >
-                Select Time: {time.toLocaleTimeString()}
-              </StyledText>
-              {showTimePicker && (
-                <DateTimePicker
-                  testID="timePicker"
-                  value={time}
-                  mode={"time"}
-                  display="default"
-                  onChange={onChangeTime}
-                />
-              )}
-            </StyledView>
-  
-            <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
-              <StyledPicker
-                selectedValue={wasteType}
-                onValueChange={(itemValue) => setWasteType(itemValue)}
-                style={styles.picker}
-              >
-                <Picker.Item label="Select the waste type" value="" />
-                <Picker.Item label="Organic Waste" value="organic" />
-                <Picker.Item label="Synthetic Waste" value="synthetic" />
-              </StyledPicker>
-            </StyledView>
-            <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
-              <STextInput
-                className="flex-1"
-                placeholder="Waste Volume"
-                value={wasteVolume}
-                onChangeText={(text) => {
-                  // Validate if the input is a float or integer
-                  const floatRegex = /^-?\d*\.?\d*$/;
-                  if (floatRegex.test(text) || text === "") {
-                    setWasteVolume(text);
-                  }
-                }}
-                style={styles.input}
-              />
-            </StyledView>
-  
-            <StyledView className="border-2 border-black-500 w-full h-16 px-4 bg-black-100 rounded-2xl focus:border-secondary items-center flex-row mb-4">
-              <STextInput
-                className="flex-1"
-                placeholder="Emergency Contact"
-                value={emergencyContact}
-                onChangeText={setEmergencyContact}
-                style={styles.input}
-              />
-            </StyledView>
-            <CustomButtons
-              title="Book a Pick-Up"
-              handlePress={submit}
-              containerStyle={[styles.buttonContainer, { marginTop: 7 }]}
-              isLoading={isSubmitting} // Set this based on your actual loading state
-            />
           </StyledView>
-        </StyledView>
-      </StyledScrollView>
+        </StyledScrollView>
+      </KeyboardAvoidingView>
     </StyledSafeAreaView>
   );
 }
@@ -259,7 +243,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   buttonContainer: {
-    alignSelf: "center", // Center the button horizontally
-    marginBottom: 10, // Adjust margin as needed
+    alignSelf: "center",
+    marginBottom: 10,
   },
 });
