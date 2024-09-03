@@ -7,16 +7,55 @@ const GlobalContext = createContext();
 
 export const useGlobalContext = () => useContext(GlobalContext);
 
-const API_BASE_URL = 'http://192.168.105.211:8000';
+const API_BASE_URL = 'http://192.168.16.211:8000';
 
 export const GlobalProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [notifications, setNotifications] = useState([]);
+
 
   useEffect(() => {
     checkUserSession();
   }, []);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchNotifications();
+    }
+  }, [isLoggedIn]);
+
+  //notifictions
+  const fetchNotifications = async () => {
+    try {
+      const token = await AsyncStorage.getItem('access_token');
+      const response = await axios.get(`${API_BASE_URL}/notifications/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setNotifications(response.data);
+    } catch (error) {
+      console.error("Fetching notifications failed:", error);
+    }
+  };
+
+  const markNotificationAsRead = async (notificationId) => {
+    try {
+      const token = await AsyncStorage.getItem('access_token');
+      await axios.patch(`${API_BASE_URL}/notifications/${notificationId}/`, 
+        { is_read: true },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setNotifications(prevNotifications => 
+        prevNotifications.map(notif => 
+          notif.id === notificationId ? { ...notif, is_read: true } : notif
+        )
+      );
+    } catch (error) {
+      console.error("Marking notification as read failed:", error);
+    }
+  };
+
 
   const checkUserSession = async () => {
     try {
@@ -144,6 +183,9 @@ return (
     logout,
     handleTokenRefresh,
     createBooking, // Add createBooking to the context value
+    notifications,
+      fetchNotifications,
+      markNotificationAsRead,
   }}>
     {children}
   </GlobalContext.Provider>

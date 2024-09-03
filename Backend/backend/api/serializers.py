@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from .models import Booking
+from .models import Notification
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -45,3 +46,8 @@ class BookingSerializer(serializers.ModelSerializer):
         instance.emergency_contact = validated_data.get('emergency_contact', instance.emergency_contact)
         instance.save()
         return instance
+    
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ['id', 'message', 'created_at', 'is_read']

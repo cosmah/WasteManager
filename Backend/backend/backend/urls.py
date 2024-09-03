@@ -1,7 +1,10 @@
 from django.contrib import admin
 from django.urls import path, include
-from api.views import CreateUserView, CustomTokenObtainPairView, CurrentUserView, BookingViewSet
+from api.views import CreateUserView, CustomTokenObtainPairView, CurrentUserView, BookingViewSet, NotificationViewSet
 from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework.routers import DefaultRouter
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -14,4 +17,9 @@ urlpatterns = [
     # Booking URLs
      path('bookings/', BookingViewSet.as_view({'get': 'list', 'post': 'create'})),
     path('bookings/<int:pk>/', BookingViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'})),
+
+    path('notifications/', NotificationViewSet.as_view({'get': 'list', 'post': 'create'})),
 ]
+
+
+

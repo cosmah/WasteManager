@@ -24,6 +24,7 @@ const StyledPicker = styled(Picker);
 const StyledScrollView = styled(ScrollView);
 
 const Bookmark = () => {
+  
   const { user, createBooking } = useGlobalContext();
   const [formData, setFormData] = useState({
     phone: "",
