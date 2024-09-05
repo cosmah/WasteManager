@@ -92,13 +92,13 @@ const TabsLayout = () => {
         <Tabs.Screen
           name="create"
           options={{
-            title: "Notifications",
+            title: "Bookings",
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcons
                 icon="notifications" // Ionicons name for bell icon
                 color={color}
-                name="Notifications"
+                name="Bookings"
                 focused={focused}
               />
             ),
