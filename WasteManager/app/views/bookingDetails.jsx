@@ -11,7 +11,7 @@ const StyledSafeAreaView = styled(SafeAreaView);
 const StyledView = styled(View);
 const StyledText = styled(Text);
 
-const API_BASE_URL = 'http://192.168.105.211:8000';
+const API_BASE_URL = 'http://192.168.133.211:8000';
 
 const BookingDetails = () => {
   const { id } = useLocalSearchParams();
@@ -38,6 +38,18 @@ const BookingDetails = () => {
 
     fetchBookingDetails();
   }, [id, user]);
+
+  const formatTime = (timeString) => {
+    if (!timeString) return 'No time';
+    const [hours, minutes] = timeString.split(':');
+    const date = new Date();
+    date.setHours(parseInt(hours, 10));
+    date.setMinutes(parseInt(minutes, 10));
+    return date instanceof Date && !isNaN(date) 
+      ? date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+      : 'Invalid Time';
+  };
+
 
   if (isLoading) {
     return (
@@ -100,7 +112,7 @@ const BookingDetails = () => {
         </StyledView>
         <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Time:</Text>
-          <Text>{new Date(booking.pickup_time).toLocaleTimeString()}</Text>
+          <StyledText style={styles.bookingText}>Time: {formatTime(booking.pickup_time)}</StyledText>
         </StyledView>
       </StyledView>
     </StyledSafeAreaView>
