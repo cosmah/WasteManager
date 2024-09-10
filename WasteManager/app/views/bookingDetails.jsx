@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, ActivityIndicator } from "react-native";
+import { Text, View, StyleSheet, ActivityIndicator, ScrollView } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { styled } from "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useGlobalContext } from '@/context/GlobalProvider';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useGlobalContext } from "@/context/GlobalProvider";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const StyledSafeAreaView = styled(SafeAreaView);
 const StyledView = styled(View);
 const StyledText = styled(Text);
 
-const API_BASE_URL = 'http://192.168.133.211:8000';
+const API_BASE_URL = "http://192.168.133.211:8000";
 
 const BookingDetails = () => {
   const { id } = useLocalSearchParams();
@@ -23,7 +23,7 @@ const BookingDetails = () => {
     const fetchBookingDetails = async () => {
       if (user) {
         try {
-          const token = await AsyncStorage.getItem('access_token');
+          const token = await AsyncStorage.getItem("access_token");
           const response = await axios.get(`${API_BASE_URL}/bookings/${id}/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
@@ -40,20 +40,22 @@ const BookingDetails = () => {
   }, [id, user]);
 
   const formatTime = (timeString) => {
-    if (!timeString) return 'No time';
-    const [hours, minutes] = timeString.split(':');
+    if (!timeString) return "No time";
+    const [hours, minutes] = timeString.split(":");
     const date = new Date();
     date.setHours(parseInt(hours, 10));
     date.setMinutes(parseInt(minutes, 10));
-    return date instanceof Date && !isNaN(date) 
-      ? date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
-      : 'Invalid Time';
+    return date instanceof Date && !isNaN(date)
+      ? date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
+      : "Invalid Time";
   };
-
 
   if (isLoading) {
     return (
-      <StyledSafeAreaView className="bg-primary h-full" style={styles.container}>
+      <StyledSafeAreaView
+        className="bg-primary h-full"
+        style={styles.container}
+      >
         <ActivityIndicator size="large" color="#0000ff" />
       </StyledSafeAreaView>
     );
@@ -61,7 +63,10 @@ const BookingDetails = () => {
 
   if (!booking) {
     return (
-      <StyledSafeAreaView className="bg-primary h-full" style={styles.container}>
+      <StyledSafeAreaView
+        className="bg-primary h-full"
+        style={styles.container}
+      >
         <StyledText>Booking not found</StyledText>
       </StyledSafeAreaView>
     );
@@ -78,42 +83,50 @@ const BookingDetails = () => {
         </StyledText>
       </StyledView>
       <StyledView style={styles.content} className="rounded-xl p-4">
+        <ScrollView>
+
+        
         <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Phone:</Text>
-          <Text>{booking.phone}</Text>
+          <Text style={styles.value}>{booking.phone}</Text>
         </StyledView>
         <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Address:</Text>
-          <Text>{booking.address}</Text>
+          <Text style={styles.value}>{booking.address}</Text>
         </StyledView>
         <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Service Type:</Text>
-          <Text>{booking.service_type}</Text>
+          <Text style={styles.value}>{booking.service_type}</Text>
         </StyledView>
         <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Service Frequency:</Text>
-          <Text>{booking.service_frequency}</Text>
+          <Text style={styles.value}>{booking.service_frequency}</Text>
         </StyledView>
         <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Waste Type:</Text>
-          <Text>{booking.waste_type}</Text>
+          <Text style={styles.value}>{booking.waste_type}</Text>
         </StyledView>
         <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Waste Volume:</Text>
-          <Text>{booking.waste_volume}</Text>
+          <Text style={styles.value}>{booking.waste_volume}</Text>
         </StyledView>
         <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Emergency Contact:</Text>
-          <Text>{booking.emergency_contact}</Text>
+          <Text style={styles.value}>{booking.emergency_contact}</Text>
         </StyledView>
         <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Date:</Text>
-          <Text>{new Date(booking.pickup_date).toLocaleDateString()}</Text>
+          <Text style={styles.value}>
+            {new Date(booking.pickup_date).toLocaleDateString()}
+          </Text>
         </StyledView>
         <StyledView style={styles.bookingText}>
           <Text style={styles.label}>Time:</Text>
-          <StyledText style={styles.bookingText}>Time: {formatTime(booking.pickup_time)}</StyledText>
+          <StyledText style={styles.value}>
+            {formatTime(booking.pickup_time)}
+          </StyledText>
         </StyledView>
+        </ScrollView>
       </StyledView>
     </StyledSafeAreaView>
   );
@@ -143,6 +156,24 @@ const styles = StyleSheet.create({
   },
   label: {
     fontWeight: "bold",
+  },
+
+  content: {
+    flex: 0.9,
+    padding: 20,
+    backgroundColor: "#ffffff",
+  },
+  bookingText: {
+    marginVertical: 10,
+  },
+  label: {
+    fontWeight: "bold",
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  value: {
+    fontSize: 16,
+    marginBottom: 10,
   },
 });
 

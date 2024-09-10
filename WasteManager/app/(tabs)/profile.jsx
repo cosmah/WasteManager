@@ -152,14 +152,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   name: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: "bold",
-    color: "#333",
+    color: "green",
     marginBottom: 5,
   },
   email: {
     fontSize: 16,
-    color: "#666",
+    color: "green",
   },
   bookingsContainer: {
     flex: 1,
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 15,
-    color: "#333",
+    color: "green",
   },
   bookingsList: {
     flex: 1,
