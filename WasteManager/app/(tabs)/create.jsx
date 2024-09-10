@@ -74,25 +74,32 @@ const Bookings = () => {
 
   const handleFilter = () => {
     const filtered = bookings.filter(booking => {
-      if (!booking.pickup_date) return false;
+      let matchesDate = true;
+      let matchesType = true;
   
-      const bookingDate = new Date(booking.pickup_date);
-      const filterDate = new Date(date);
+      // Only apply date filter if a date is selected
+      if (date) {
+        const bookingDate = new Date(booking.pickup_date);
+        const filterDate = new Date(date);
+        matchesDate = (
+          bookingDate.getFullYear() === filterDate.getFullYear() &&
+          bookingDate.getMonth() === filterDate.getMonth() &&
+          bookingDate.getDate() === filterDate.getDate()
+        );
+      }
   
-      // Compare year, month, and day only
-      const matchesDate = !date || (
-        bookingDate.getFullYear() === filterDate.getFullYear() &&
-        bookingDate.getMonth() === filterDate.getMonth() &&
-        bookingDate.getDate() === filterDate.getDate()
-      );
+      // Only apply type filter if a type is selected
+      if (type) {
+        matchesType = booking.service_type === type;
+      }
   
-      const matchesType = !type || booking.service_type === type;
-  
-      return matchesDate && matchesType;
+      // Return true if the booking matches either the date or the type filter (or both)
+      return matchesDate || matchesType;
     });
   
     setFilteredBookings(filtered);
   };
+
   const handleResetFilters = () => {
     setDate(new Date());
     setType('');
