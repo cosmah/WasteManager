@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,7 +7,6 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useState } from "react";
 import { styled } from "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -18,6 +18,8 @@ const StyledSafeAreaView = styled(SafeAreaView);
 const StyledView = styled(View);
 const StyledText = styled(Text);
 const StyledImage = styled(Image);
+const StyledTouchableOpacity = styled(TouchableOpacity);
+const StyledScrollView = styled(ScrollView);
 
 const API_BASE_URL = "http://192.168.133.211:8000";
 
@@ -78,83 +80,67 @@ const Profile = () => {
 
   return (
     <StyledSafeAreaView className="bg-primary h-full" style={styles.container}>
-      <StyledView style={{ flex: 1 }}>
-        <StyledView
-          className="flex-row items-center mb-6 p-5"
-          style={styles.profileContainer}
-        >
+      <StyledView style={styles.content}>
+        <StyledView style={styles.profileContainer}>
           {user.avatar && (
             <StyledImage
-              className=""
               source={{ uri: user.avatar }}
               style={styles.avatar}
             />
           )}
           <StyledView style={styles.infoContainer}>
-            <StyledText
-              className="text-2xl font-psemibold text-secondary"
-              style={styles.name}
-            >
-              {user.username}
-            </StyledText>
-            <StyledText
-              className="text-2xl font-psemibold text-secondary-100"
-              style={styles.email}
-            >
-              {user.email}
-            </StyledText>
+            <StyledText style={styles.name}>{user.username}</StyledText>
+            <StyledText style={styles.email}>{user.email}</StyledText>
           </StyledView>
         </StyledView>
 
-        <StyledView
-          style={{ backgroundColor: "#7A7777", flex: 1 }}
-          className="rounded-xl"
-        >
-          <StyledView className="flex-row justify-around mt-5">
-            <ScrollView>
-              {bookings.length > 0 ? (
-                bookings.map((booking) => (
-                  <TouchableOpacity
-                    key={booking.id}
-                    style={styles.bookingItem}
-                    onPress={() =>
-                      router.push(`/views/bookingDetails?id=${booking.id}`)
-                    }
-                  >
-                    <StyledText style={styles.bookingText}>
-                      Service Type: {booking.service_type}
-                    </StyledText>
-                    <StyledText style={styles.bookingText}>
-                      Date: {formatDate(booking.pickup_date)}
-                    </StyledText>
-                    <StyledText style={styles.bookingText}>
-                      Time: {formatTime(booking.pickup_time)}
-                    </StyledText>
-                  </TouchableOpacity>
-                ))
-              ) : (
-                <StyledText style={styles.noBookingsText}>
-                  No bookings found.
-                </StyledText>
-              )}
-            </ScrollView>
-          </StyledView>
+        <StyledView style={styles.bookingsContainer}>
+          <StyledText style={styles.bookingsTitle}>Your Bookings</StyledText>
+          <StyledScrollView style={styles.bookingsList}>
+            {bookings.length > 0 ? (
+              bookings.map((booking) => (
+                <StyledTouchableOpacity
+                  key={booking.id}
+                  style={styles.bookingItem}
+                  onPress={() =>
+                    router.push(`/views/bookingDetails?id=${booking.id}`)
+                  }
+                >
+                  <StyledText style={styles.bookingServiceType}>
+                    {booking.service_type}
+                  </StyledText>
+                  <StyledText style={styles.bookingText}>
+                    Date: {formatDate(booking.pickup_date)}
+                  </StyledText>
+                  <StyledText style={styles.bookingText}>
+                    Time: {formatTime(booking.pickup_time)}
+                  </StyledText>
+                </StyledTouchableOpacity>
+              ))
+            ) : (
+              <StyledText style={styles.noBookingsText}>
+                No bookings found.
+              </StyledText>
+            )}
+          </StyledScrollView>
         </StyledView>
       </StyledView>
     </StyledSafeAreaView>
   );
 };
 
-export default Profile;
-
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  content: {
     flex: 1,
     padding: 20,
   },
   profileContainer: {
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 20,
   },
   avatar: {
     width: 70,
@@ -166,27 +152,61 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   name: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 10,
+    color: "#333",
+    marginBottom: 5,
   },
   email: {
-    fontSize: 15,
+    fontSize: 16,
+    color: "#666",
+  },
+  bookingsContainer: {
+    flex: 1,
+    backgroundColor: "#f0f0f0",
+    borderRadius: 15,
+    padding: 15,
+  },
+  bookingsTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 15,
+    color: "#333",
+  },
+  bookingsList: {
+    flex: 1,
   },
   bookingItem: {
     backgroundColor: "#fff",
-    padding: 10,
-    marginVertical: 5,
+    padding: 15,
+    marginBottom: 10,
     borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+    elevation: 4,
+  },
+  bookingServiceType: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#007bff",
+    marginBottom: 5,
   },
   bookingText: {
     fontSize: 16,
-    color: "#000",
+    color: "#333",
+    marginBottom: 3,
   },
   noBookingsText: {
     fontSize: 16,
-    color: "#fff",
+    color: "#666",
     textAlign: "center",
     marginTop: 20,
   },
 });
+
+export default Profile;
