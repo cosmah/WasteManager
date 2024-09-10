@@ -113,6 +113,7 @@ const Bookmark = () => {
       <STextInput
         className="flex-1"
         placeholder={placeholder}
+        placeholderTextColor="whitesmoke"
         value={formData[name]}
         onChangeText={(text) => handleInputChange(name, text)}
         style={styles.input}
@@ -128,7 +129,7 @@ const Bookmark = () => {
         onValueChange={(itemValue) => handleInputChange(name, itemValue)}
         style={styles.picker}
       >
-        <Picker.Item label={placeholder} value="" />
+        <Picker.Item label={placeholder} value="" color="whitesmoke" />
         {items.map((item) => (
           <Picker.Item key={item.value} label={item.label} value={item.value} />
         ))}
@@ -235,10 +236,12 @@ const styles = StyleSheet.create({
     height: 40,
     paddingLeft: 10,
     color: "gray",
+    fontSize: 16, // Increase font size
   },
   picker: {
     flex: 1,
     color: "gray",
+    fontSize: 16, // Increase font size
   },
   scrollViewContent: {
     flexGrow: 1,
