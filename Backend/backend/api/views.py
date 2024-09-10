@@ -1,3 +1,4 @@
+# views.py
 from django.contrib.auth.models import User
 from rest_framework import generics, status, viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -5,10 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import UserSerializer, BookingSerializer
-from rest_framework.response import Response
 from .models import Booking
-
-
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     permission_classes = (AllowAny,)
@@ -62,9 +60,22 @@ class BookingViewSet(viewsets.ModelViewSet):
         if action in ['partial_update', 'update']:
             kwargs.pop('pk', None)
         return kwargs
-    #seralizers
+
     def list(self, request):
         queryset = self.queryset.filter(user=request.user)
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+# New view for waste data
+class WasteDataView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        # Replace with your actual data fetching logic
+        data = {
+            "totalCollected": 1500,
+            "totalRecycled": 1200,
+            "organicWaste": 800,
+            "syntheticWaste": 700,
+        }
+        return Response(data)

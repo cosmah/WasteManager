@@ -22,11 +22,11 @@ const StyledImage = styled(Image);
 const StyledTouchableOpacity = styled(TouchableOpacity);
 
 const Home = () => {
+  const { user, isLoading, wasteData } = useGlobalContext();
+
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [placeName, setPlaceName] = useState("Loading...");
-
-  const { user, isLoading } = useGlobalContext();
 
   useEffect(() => {
     (async () => {
@@ -56,9 +56,9 @@ const Home = () => {
   } else if (location) {
     locationText = (
       <>
-  <Ionicons name="location-sharp" marginTop={10} size={20} color="green" /> 
-  <Text style={{ fontSize: 18 }}>{placeName}</Text>
-</>
+        <Ionicons name="location-sharp" marginTop={10} size={20} color="green" /> 
+        <Text style={{ fontSize: 18 }}>{placeName}</Text>
+      </>
     );
   }
 
@@ -96,7 +96,7 @@ const Home = () => {
           <StyledView className="flex-row justify-around mt-5">
             <StyledView className="items-center">
               <StyledView style={styles.iconBackground}>
-                <StyledText className="text-4xl text-lime-500">1500 kg</StyledText>
+                <StyledText className="text-4xl text-lime-500">{wasteData.totalCollected} kg</StyledText>
               </StyledView>
               <StyledText className="text-black font-psemibold mt-2">
                 Total Waste Collected
@@ -104,7 +104,7 @@ const Home = () => {
             </StyledView>
             <StyledView className="items-center">
               <StyledView style={styles.iconBackground}>
-                <StyledText className="text-4xl text-lime-500">1200 kg</StyledText>
+                <StyledText className="text-4xl text-lime-500">{wasteData.totalRecycled} kg</StyledText>
               </StyledView>
               <StyledText className="text-black font-psemibold mt-2">
                 Total Waste Recycled
@@ -114,13 +114,13 @@ const Home = () => {
           <StyledView className="flex-row justify-around mt-5">
             <StyledView className="items-center">
               <StyledView style={styles.iconBackground}>
-                <StyledText className="text-4xl text-lime-500">800 kg</StyledText>
+                <StyledText className="text-4xl text-lime-500">{wasteData.organicWaste} kg</StyledText>
               </StyledView>
               <StyledText className="text-black font-psemibold mt-2">Organic Waste</StyledText>
             </StyledView>
             <StyledView className="items-center">
               <StyledView style={styles.iconBackground}>
-                <StyledText className="text-4xl text-lime-500">700 kg</StyledText>
+                <StyledText className="text-4xl text-lime-500">{wasteData.syntheticWaste} kg</StyledText>
               </StyledView>
               <StyledText className="text-black font-psemibold mt-2">
                 Synthetic Waste

@@ -15,6 +15,12 @@ export const GlobalProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   //const [notifications, setNotifications] = useState([]);
 
+  const [wasteData, setWasteData] = useState({
+    totalCollected: 0,
+    totalRecycled: 0,
+    organicWaste: 0,
+    syntheticWaste: 0,
+  });
 
   useEffect(() => {
     checkUserSession();
@@ -26,6 +32,29 @@ export const GlobalProvider = ({ children }) => {
     }
   }, [isLoggedIn]);
 
+
+  const fetchWasteData = async () => {
+    try {
+      const token = await AsyncStorage.getItem('access_token');
+      if (!token) {
+        throw new Error("No access token found");
+      }
+  
+      const response = await axios.get(`${API_BASE_URL}/api/waste-data/`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      setWasteData(response.data);
+    } catch (error) {
+      console.error("Fetching waste data failed:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchWasteData();
+    }
+  }, [isLoggedIn]);
 
 
   const checkUserSession = async () => {
@@ -154,6 +183,7 @@ return (
     logout,
     handleTokenRefresh,
     createBooking, // Add createBooking to the context value
+    wasteData,
     // notifications,
     //   fetchNotifications,
     //   markNotificationAsRead,

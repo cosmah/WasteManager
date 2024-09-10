@@ -1,10 +1,8 @@
+# urls.py
 from django.contrib import admin
 from django.urls import path, include
-from api.views import CreateUserView, CustomTokenObtainPairView, CurrentUserView, BookingViewSet
+from api.views import CreateUserView, CustomTokenObtainPairView, CurrentUserView, BookingViewSet, WasteDataView
 from rest_framework_simplejwt.views import TokenRefreshView
-from rest_framework.routers import DefaultRouter
-
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -15,8 +13,11 @@ urlpatterns = [
     path('api/user/current/', CurrentUserView.as_view(), name='current_user'),
     
     # Booking URLs
-     path('bookings/', BookingViewSet.as_view({'get': 'list', 'post': 'create'})),
+    path('bookings/', BookingViewSet.as_view({'get': 'list', 'post': 'create'})),
     path('bookings/<int:pk>/', BookingViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'})),
+
+    # Waste Data URL
+    path('api/waste-data/', WasteDataView.as_view(), name='waste_data'),
 ]
 
 
