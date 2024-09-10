@@ -7,7 +7,7 @@ const GlobalContext = createContext();
 
 export const useGlobalContext = () => useContext(GlobalContext);
 
-const API_BASE_URL = 'http://192.168.218.211:8000';
+const API_BASE_URL = 'http://192.168.133.211:8000';
 
 export const GlobalProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

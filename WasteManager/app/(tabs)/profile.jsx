@@ -12,7 +12,7 @@ const StyledView = styled(View);
 const StyledText = styled(Text);
 const StyledImage = styled(Image);
 
-const API_BASE_URL = 'http://192.168.218.211:8000';
+const API_BASE_URL = 'http://192.168.133.211:8000';
 
 const Profile = () => {
   const { user, isLoading } = useGlobalContext();
