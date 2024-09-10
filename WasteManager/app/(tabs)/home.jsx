@@ -12,6 +12,8 @@ import { styled } from "nativewind";
 import { useGlobalContext } from '@/context/GlobalProvider';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import * as Location from "expo-location";
+import Ionicons from "@expo/vector-icons/Ionicons";
+
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -39,11 +41,15 @@ const Home = () => {
   }, []);
 
   let locationText = "Loading...";
-  if (errorMsg) {
-    locationText = errorMsg;
-  } else if (location) {
-    locationText = `Location: ${location.coords.latitude}, ${location.coords.longitude}`;
-  }
+if (errorMsg) {
+  locationText = errorMsg;
+} else if (location) {
+  locationText = (
+    <>
+      <Ionicons name="location-sharp" size={16} color="green" /> {location.coords.latitude}, {location.coords.longitude}
+    </>
+  );
+}
 
   if (isLoading) {
     return (
