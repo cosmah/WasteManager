@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import UserSerializer, BookingSerializer
 from .models import Booking
+from django.db.models import Sum
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     permission_classes = (AllowAny,)
@@ -71,11 +72,24 @@ class WasteDataView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # Replace with your actual data fetching logic
+        user = request.user
+
+        # Calculate total waste collected
+        total_collected = Booking.objects.filter(user=user).aggregate(Sum('waste_volume'))['waste_volume__sum'] or 0
+
+        # Calculate total waste recycled (assuming 'recycling' service type means recycled)
+        total_recycled = Booking.objects.filter(user=user, service_type='recycling').aggregate(Sum('waste_volume'))['waste_volume__sum'] or 0
+
+        # Calculate organic waste
+        organic_waste = Booking.objects.filter(user=user, waste_type='organic').aggregate(Sum('waste_volume'))['waste_volume__sum'] or 0
+
+        # Calculate synthetic waste
+        synthetic_waste = Booking.objects.filter(user=user, waste_type='synthetic').aggregate(Sum('waste_volume'))['waste_volume__sum'] or 0
+
         data = {
-            "totalCollected": 1500,
-            "totalRecycled": 1200,
-            "organicWaste": 800,
-            "syntheticWaste": 700,
+            "totalCollected": total_collected,
+            "totalRecycled": total_recycled,
+            "organicWaste": organic_waste,
+            "syntheticWaste": synthetic_waste,
         }
         return Response(data)
