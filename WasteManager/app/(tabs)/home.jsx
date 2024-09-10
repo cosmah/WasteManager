@@ -13,7 +13,7 @@ import { useGlobalContext } from '@/context/GlobalProvider';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import * as Location from "expo-location";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
+import axios from 'axios';
 
 const StyledView = styled(View);
 const StyledText = styled(Text);
@@ -24,6 +24,7 @@ const StyledTouchableOpacity = styled(TouchableOpacity);
 const Home = () => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [placeName, setPlaceName] = useState("Loading...");
 
   const { user, isLoading } = useGlobalContext();
 
@@ -37,19 +38,29 @@ const Home = () => {
 
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
+
+      // Reverse geocoding to get place name
+      const { latitude, longitude } = location.coords;
+      try {
+        const response = await axios.get(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`);
+        setPlaceName(response.data.city || response.data.locality || "Unknown location");
+      } catch (error) {
+        setErrorMsg('Failed to get place name');
+      }
     })();
   }, []);
 
   let locationText = "Loading...";
-if (errorMsg) {
-  locationText = errorMsg;
-} else if (location) {
-  locationText = (
-    <>
-      <Ionicons name="location-sharp" size={16} color="green" /> {location.coords.latitude}, {location.coords.longitude}
-    </>
-  );
-}
+  if (errorMsg) {
+    locationText = errorMsg;
+  } else if (location) {
+    locationText = (
+      <>
+  <Ionicons name="location-sharp" marginTop={10} size={20} color="green" /> 
+  <Text style={{ fontSize: 18 }}>{placeName}</Text>
+</>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -66,10 +77,10 @@ if (errorMsg) {
       <StyledView style={{ flex: 1 }}>
         <StyledView className="flex-row justify-between items-center mb-6 p-5">
           <StyledView>
-            <StyledText className="text-2xl font-psemibold text-secondary">
+            <StyledText className="text-2xl font-psemibold text-secondary mb-6">
               Hi, {user ? user.username : "Guest"}
             </StyledText>
-            <StyledText className="text-sm text-gray-100">
+            <StyledText className="text-sm text-gray-100 pt-5">
               {locationText}
             </StyledText>
           </StyledView>
