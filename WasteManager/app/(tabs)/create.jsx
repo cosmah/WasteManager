@@ -53,6 +53,25 @@ const Bookings = () => {
     fetchBookings();
   }, [user]);
 
+  const formatDate = (dateString) => {
+    if (!dateString) return 'No date';
+    const date = new Date(dateString);
+    return date instanceof Date && !isNaN(date) 
+      ? date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+      : 'Invalid Date';
+  };
+
+  const formatTime = (timeString) => {
+    if (!timeString) return 'No time';
+    const [hours, minutes] = timeString.split(':');
+    const date = new Date();
+    date.setHours(parseInt(hours, 10));
+    date.setMinutes(parseInt(minutes, 10));
+    return date instanceof Date && !isNaN(date) 
+      ? date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+      : 'Invalid Time';
+  };
+
   const handleFilter = () => {
     const filtered = bookings.filter(booking => {
       const bookingDate = new Date(booking.pickupDate);
@@ -124,23 +143,23 @@ const Bookings = () => {
           </StyledView>
         )}
 
-        <ScrollView style={styles.bookingsList}>
-          {filteredBookings.length > 0 ? (
-            filteredBookings.map((booking) => (
-              <StyledTouchableOpacity
-                key={booking.id}
-                style={styles.bookingItem}
-                onPress={() => router.push(`/views/bookingDetails?id=${booking.id}`)}
-              >
-                <StyledText style={styles.bookingText}>Service Type: {booking.service_type}</StyledText>
-                <StyledText style={styles.bookingText}>Date: {new Date(booking.pickupDate).toLocaleDateString()}</StyledText>
-                <StyledText style={styles.bookingText}>Time: {new Date(booking.pickupTime).toLocaleTimeString()}</StyledText>
-              </StyledTouchableOpacity>
-            ))
-          ) : (
-            <StyledText style={styles.noBookingsText}>No bookings found</StyledText>
-          )}
-        </ScrollView>
+<ScrollView style={styles.bookingsList}>
+        {filteredBookings.length > 0 ? (
+          filteredBookings.map((booking) => (
+            <StyledTouchableOpacity
+              key={booking.id}
+              style={styles.bookingItem}
+              onPress={() => router.push(`/views/bookingDetails?id=${booking.id}`)}
+            >
+              <StyledText style={styles.bookingText}>Service Type: {booking.service_type}</StyledText>
+              <StyledText style={styles.bookingText}>Date: {formatDate(booking.pickup_date)}</StyledText>
+              <StyledText style={styles.bookingText}>Time: {formatTime(booking.pickup_time)}</StyledText>
+            </StyledTouchableOpacity>
+          ))
+        ) : (
+          <StyledText style={styles.noBookingsText}>No bookings found</StyledText>
+        )}
+      </ScrollView>
       </StyledView>
     </StyledSafeAreaView>
   );

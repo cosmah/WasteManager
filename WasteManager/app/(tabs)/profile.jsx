@@ -1,18 +1,25 @@
-import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { styled } from "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { useGlobalContext } from '@/context/GlobalProvider';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useGlobalContext } from "@/context/GlobalProvider";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const StyledSafeAreaView = styled(SafeAreaView);
 const StyledView = styled(View);
 const StyledText = styled(Text);
 const StyledImage = styled(Image);
 
-const API_BASE_URL = 'http://192.168.133.211:8000';
+const API_BASE_URL = "http://192.168.133.211:8000";
 
 const Profile = () => {
   const { user, isLoading } = useGlobalContext();
@@ -23,7 +30,7 @@ const Profile = () => {
     const fetchBookings = async () => {
       if (user) {
         try {
-          const token = await AsyncStorage.getItem('access_token');
+          const token = await AsyncStorage.getItem("access_token");
           const response = await axios.get(`${API_BASE_URL}/bookings/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
@@ -42,6 +49,29 @@ const Profile = () => {
     fetchBookings();
   }, [user]);
 
+  const formatDate = (dateString) => {
+    if (!dateString) return "No date";
+    const date = new Date(dateString);
+    return date instanceof Date && !isNaN(date)
+      ? date.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })
+      : "Invalid Date";
+  };
+
+  const formatTime = (timeString) => {
+    if (!timeString) return "No time";
+    const [hours, minutes] = timeString.split(":");
+    const date = new Date();
+    date.setHours(parseInt(hours, 10));
+    date.setMinutes(parseInt(minutes, 10));
+    return date instanceof Date && !isNaN(date)
+      ? date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })
+      : "Invalid Time";
+  };
+
   if (isLoading || !user) {
     return <Text>Loading...</Text>;
   }
@@ -49,9 +79,16 @@ const Profile = () => {
   return (
     <StyledSafeAreaView className="bg-primary h-full" style={styles.container}>
       <StyledView style={{ flex: 1 }}>
-        <StyledView className="flex-row items-center mb-6 p-5" style={styles.profileContainer}>
+        <StyledView
+          className="flex-row items-center mb-6 p-5"
+          style={styles.profileContainer}
+        >
           {user.avatar && (
-            <StyledImage className="" source={{ uri: user.avatar }} style={styles.avatar} />
+            <StyledImage
+              className=""
+              source={{ uri: user.avatar }}
+              style={styles.avatar}
+            />
           )}
           <StyledView style={styles.infoContainer}>
             <StyledText
@@ -80,15 +117,25 @@ const Profile = () => {
                   <TouchableOpacity
                     key={booking.id}
                     style={styles.bookingItem}
-                    onPress={() => router.push(`/views/bookingDetails?id=${booking.id}`)}
+                    onPress={() =>
+                      router.push(`/views/bookingDetails?id=${booking.id}`)
+                    }
                   >
-                    <StyledText style={styles.bookingText}>Service Type: {booking.serviceType}</StyledText>
-                    <StyledText style={styles.bookingText}>Date: {new Date(booking.pickupDate).toLocaleDateString()}</StyledText>
-                    <StyledText style={styles.bookingText}>Time: {new Date(booking.pickupTime).toLocaleTimeString()}</StyledText>
+                    <StyledText style={styles.bookingText}>
+                      Service Type: {booking.service_type}
+                    </StyledText>
+                    <StyledText style={styles.bookingText}>
+                      Date: {formatDate(booking.pickup_date)}
+                    </StyledText>
+                    <StyledText style={styles.bookingText}>
+                      Time: {formatTime(booking.pickup_time)}
+                    </StyledText>
                   </TouchableOpacity>
                 ))
               ) : (
-                <StyledText style={styles.noBookingsText}>No bookings found.</StyledText>
+                <StyledText style={styles.noBookingsText}>
+                  No bookings found.
+                </StyledText>
               )}
             </ScrollView>
           </StyledView>
@@ -106,8 +153,8 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   profileContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   avatar: {
     width: 70,
@@ -139,7 +186,7 @@ const styles = StyleSheet.create({
   noBookingsText: {
     fontSize: 16,
     color: "#fff",
-    textAlign: 'center',
+    textAlign: "center",
     marginTop: 20,
   },
 });
