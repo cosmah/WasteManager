@@ -14,7 +14,7 @@ const StyledView = styled(View);
 const StyledText = styled(Text);
 const StyledTouchableOpacity = styled(TouchableOpacity);
 
-const API_BASE_URL = "http://192.168.226.211:8000";
+const API_BASE_URL = "http://192.168.232.211:8000";
 
 const serviceTypes = [
   { label: "All Types", value: "" },

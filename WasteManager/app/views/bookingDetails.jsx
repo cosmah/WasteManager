@@ -11,7 +11,7 @@ const StyledSafeAreaView = styled(SafeAreaView);
 const StyledView = styled(View);
 const StyledText = styled(Text);
 
-const API_BASE_URL = "http://192.168.226.211:8000";
+const API_BASE_URL = "http://192.168.232.211:8000";
 
 const BookingDetails = () => {
   const { id } = useLocalSearchParams();

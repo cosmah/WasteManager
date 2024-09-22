@@ -61,7 +61,7 @@ const SignIn = () => {
           </StyledText>
 
           <FormField
-            title="Email Address"
+            title="Username"
             value={form.email}
             handleChangeText={(e) => setForm({ ...form, email: e })}
             otherStyles="mt-7"
