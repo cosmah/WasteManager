@@ -8,6 +8,37 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import UserSerializer, BookingSerializer
 from .models import Booking
 from django.db.models import Sum
+from rest_framework import status
+
+class SupervisorDashboardView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        
+        # Fetch bookings for the supervisor
+        bookings = Booking.objects.filter(user=user)
+        
+        # Serialize the bookings
+        serialized_bookings = BookingSerializer(bookings, many=True).data
+        
+        # Calculate waste statistics
+        total_collected = sum(b.waste_volume for b in bookings)
+        total_recycled = sum(b.waste_volume for b in bookings if b.service_type == 'recycling')
+        organic_waste = sum(b.waste_volume for b in bookings if b.waste_type == 'organic')
+        synthetic_waste = sum(b.waste_volume for b in bookings if b.waste_type == 'synthetic')
+        
+        # Prepare the response
+        data = {
+            "bookings": serialized_bookings,
+            "total_collected": total_collected,
+            "total_recycled": total_recycled,
+            "organic_waste": organic_waste,
+            "synthetic_waste": synthetic_waste,
+        }
+        
+        return Response(data)
+
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     permission_classes = (AllowAny,)

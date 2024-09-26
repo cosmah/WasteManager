@@ -1,7 +1,7 @@
 # urls.py
 from django.contrib import admin
 from django.urls import path, include
-from api.views import CreateUserView, CustomTokenObtainPairView, CurrentUserView, BookingViewSet, WasteDataView
+from api.views import CreateUserView, CustomTokenObtainPairView, CurrentUserView, BookingViewSet, WasteDataView, SupervisorDashboardView
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
@@ -11,7 +11,8 @@ urlpatterns = [
     path("api-auth/", include("rest_framework.urls")),
     path('api/user/login/', CustomTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/user/current/', CurrentUserView.as_view(), name='current_user'),
-    
+    path('api/supervisor/dashboard/', SupervisorDashboardView.as_view(), name='supervisor_dashboard'),
+
     # Booking URLs
     path('bookings/', BookingViewSet.as_view({'get': 'list', 'post': 'create'})),
     path('bookings/<int:pk>/', BookingViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'})),
