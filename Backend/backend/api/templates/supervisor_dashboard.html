@@ -4,27 +4,105 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Supervisor Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <style>
-        /* Add your CSS styling here */
+        body {
+            background-color: #f8f9fa;
+        }
+        .navbar {
+            margin-bottom: 20px;
+        }
+        .card {
+            margin-bottom: 20px;
+        }
+        .table th, .table td {
+            vertical-align: middle;
+        }
+        .chart-container {
+            position: relative;
+            height: 40vh;
+            width: 80vw;
+        }
     </style>
 </head>
 <body>
-    <h1>Supervisor Dashboard</h1>
-    
-    <div id="dashboard-content"></div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Supervisor Dashboard</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-user"></i> Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
+    <div class="container">
+        <h1 class="mb-4">Welcome to the Supervisor Dashboard</h1>
+
+        <!-- Waste Statistics Card -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-chart-bar"></i> Waste Statistics
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookings Table Card -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-table"></i> Bookings
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Volume (kg)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bookings-table-body">
+                            <!-- Bookings will be populated here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         fetch('/api/supervisor/dashboard/')
             .then(response => response.json())
             .then(data => {
                 // Display bookings table
-                let bookingsTable = document.createElement('table');
-                bookingsTable.innerHTML = '<tr><th>Date</th><th>Type</th><th>Volume</th></tr>';
+                let bookingsTableBody = document.getElementById('bookings-table-body');
                 data.bookings.forEach(booking => {
-                    bookingsTable.innerHTML += `<tr><td>${new Date(booking.date).toLocaleDateString()}</td><td>${booking.service_type}</td><td>${booking.waste_volume.toFixed(2)} kg</td></tr>`;
+                    let row = document.createElement('tr');
+                    row.innerHTML = `<td>${new Date(booking.date).toLocaleDateString()}</td><td>${booking.service_type}</td><td>${booking.waste_volume.toFixed(2)}</td>`;
+                    bookingsTableBody.appendChild(row);
                 });
-                document.getElementById('dashboard-content').appendChild(bookingsTable);
 
                 // Display charts
                 const ctx = document.getElementById('myChart').getContext('2d');

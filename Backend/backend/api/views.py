@@ -1,5 +1,9 @@
 # views.py
-from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.contrib.auth.models import User  # Import the User model
 from rest_framework import generics, status, viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
@@ -8,32 +12,29 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import UserSerializer, BookingSerializer
 from .models import Booking, Profile
 from django.db.models import Sum
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
-from django.contrib import messages
 
 class SupervisorDashboardView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
-        
+
         # Ensure the user is a supervisor
         if not user.profile.is_supervisor:
             return Response({"detail": "Not authorized."}, status=status.HTTP_403_FORBIDDEN)
-        
+
         # Fetch bookings for the supervisor
         bookings = Booking.objects.filter(user=user)
-        
+
         # Serialize the bookings
         serialized_bookings = BookingSerializer(bookings, many=True).data
-        
+
         # Calculate waste statistics
         total_collected = sum(b.waste_volume for b in bookings)
         total_recycled = sum(b.waste_volume for b in bookings if b.service_type == 'recycling')
         organic_waste = sum(b.waste_volume for b in bookings if b.waste_type == 'organic')
         synthetic_waste = sum(b.waste_volume for b in bookings if b.waste_type == 'synthetic')
-        
+
         # Prepare the response
         data = {
             "bookings": serialized_bookings,
@@ -42,7 +43,7 @@ class SupervisorDashboardView(APIView):
             "organic_waste": organic_waste,
             "synthetic_waste": synthetic_waste,
         }
-        
+
         return Response(data)
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -138,7 +139,14 @@ def supervisor_login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None and user.profile.is_supervisor:
             login(request, user)
-            return render(request, 'supervisor_dashboard.html')
+            return redirect('supervisor_dashboard_html')  # Redirect to the supervisor dashboard HTML view
         else:
             messages.error(request, 'Invalid username or password')
     return render(request, 'login.html')
+
+# New view to render the supervisor dashboard HTML template
+@login_required
+def supervisor_dashboard_html_view(request):
+    if not request.user.profile.is_supervisor:
+        return redirect('supervisor_login')
+    return render(request, 'supervisor_dashboard.html')

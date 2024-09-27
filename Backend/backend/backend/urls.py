@@ -1,7 +1,7 @@
 # urls.py
 from django.contrib import admin
 from django.urls import path, include
-from api.views import CreateUserView, CustomTokenObtainPairView, CurrentUserView, BookingViewSet, WasteDataView, SupervisorDashboardView, supervisor_login_view
+from api.views import CreateUserView, CustomTokenObtainPairView, CurrentUserView, BookingViewSet, WasteDataView, SupervisorDashboardView, supervisor_login_view, supervisor_dashboard_html_view
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
@@ -22,4 +22,7 @@ urlpatterns = [
 
     # Supervisor login URL as root
     path('', supervisor_login_view, name='supervisor_login'),
+
+    # Supervisor dashboard HTML view
+    path('supervisor/dashboard/', supervisor_dashboard_html_view, name='supervisor_dashboard_html'),
 ]
