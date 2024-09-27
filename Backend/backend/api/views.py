@@ -8,7 +8,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import UserSerializer, BookingSerializer
 from .models import Booking
 from django.db.models import Sum
-from rest_framework import status
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
 
 class SupervisorDashboardView(APIView):
     permission_classes = [IsAuthenticated]
@@ -38,7 +40,6 @@ class SupervisorDashboardView(APIView):
         }
         
         return Response(data)
-
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     permission_classes = (AllowAny,)
@@ -124,3 +125,16 @@ class WasteDataView(APIView):
             "syntheticWaste": synthetic_waste,
         }
         return Response(data)
+
+# New view for supervisor login
+def supervisor_login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return render(request, 'supervisor_dashboard.html')
+        else:
+            messages.error(request, 'Invalid username or password')
+    return render(request, 'login.html')
