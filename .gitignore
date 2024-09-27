@@ -9,5 +9,6 @@ env  # Ignore virtual environment
 # Ignore Python cache files
 __pycache__/
 *.py[cod]
+*.pyc
 
 # Ignore log files
