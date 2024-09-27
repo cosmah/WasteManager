@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import UserSerializer, BookingSerializer
-from .models import Booking
+from .models import Booking, Profile
 from django.db.models import Sum
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
@@ -17,6 +17,10 @@ class SupervisorDashboardView(APIView):
 
     def get(self, request):
         user = request.user
+        
+        # Ensure the user is a supervisor
+        if not user.profile.is_supervisor:
+            return Response({"detail": "Not authorized."}, status=status.HTTP_403_FORBIDDEN)
         
         # Fetch bookings for the supervisor
         bookings = Booking.objects.filter(user=user)
@@ -132,7 +136,7 @@ def supervisor_login_view(request):
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
-        if user is not None:
+        if user is not None and user.profile.is_supervisor:
             login(request, user)
             return render(request, 'supervisor_dashboard.html')
         else:
