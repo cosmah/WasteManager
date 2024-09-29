@@ -1,11 +1,24 @@
 from django.contrib import admin
+from django.shortcuts import render
 from .models import Booking
 
-from django.contrib import admin
-from .models import Booking
+class BookingByAddressAdmin(admin.ModelAdmin):
+    change_list_template = "admin/bookings_by_address.html"
 
-@admin.register(Booking)
-class BookingAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'phone', 'address', 'service_type', 'service_frequency', 'pickup_date', 'pickup_time', 'waste_type', 'waste_volume', 'emergency_contact')
-    search_fields = ('phone', 'address', 'service_type', 'waste_type')
-    list_filter = ('service_type', 'service_frequency', 'pickup_date', 'pickup_time')
+    def changelist_view(self, request, extra_context=None):
+        # Group bookings by address
+        bookings_by_address = {}
+        for booking in Booking.objects.all():
+            if booking.address not in bookings_by_address:
+                bookings_by_address[booking.address] = []
+            bookings_by_address[booking.address].append(booking)
+
+        addresses = list(bookings_by_address.keys())
+
+        context = {
+            'addresses': addresses,
+            'bookings_by_address': bookings_by_address,
+        }
+        return super().changelist_view(request, extra_context=context)
+
+admin.site.register(Booking, BookingByAddressAdmin)

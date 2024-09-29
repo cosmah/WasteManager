@@ -1,0 +1,51 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<h1>Bookings by Address</h1>
+<div class="tabs">
+    <ul>
+        {% for address in addresses %}
+            <li><a href="#{{ address|slugify }}">{{ address }}</a></li>
+        {% endfor %}
+    </ul>
+    {% for address in addresses %}
+        <div id="{{ address|slugify }}">
+            <h2>{{ address }}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Phone</th>
+                        <th>Service Type</th>
+                        <th>Service Frequency</th>
+                        <th>Pickup Date</th>
+                        <th>Pickup Time</th>
+                        <th>Waste Type</th>
+                        <th>Waste Volume</th>
+                        <th>Emergency Contact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings_by_address|get_item:address %}
+                        <tr>
+                            <td>{{ booking.id }}</td>
+                            <td>{{ booking.user }}</td>
+                            <td>{{ booking.phone }}</td>
+                            <td>{{ booking.service_type }}</td>
+                            <td>{{ booking.service_frequency }}</td>
+                            <td>{{ booking.pickup_date }}</td>
+                            <td>{{ booking.pickup_time }}</td>
+                            <td>{{ booking.waste_type }}</td>
+                            <td>{{ booking.waste_volume }}</td>
+                            <td>{{ booking.emergency_contact }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
