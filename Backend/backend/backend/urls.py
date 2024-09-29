@@ -5,7 +5,7 @@ from api.views import CreateUserView, CustomTokenObtainPairView, CurrentUserView
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('', admin.site.urls),  # Make admin the root route
     path("api/user/register/", CreateUserView.as_view(), name="register"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api-auth/", include("rest_framework.urls")),
@@ -19,6 +19,3 @@ urlpatterns = [
     # Waste Data URL
     path('api/waste-data/', WasteDataView.as_view(), name='waste_data'),
 ]
-
-
-
