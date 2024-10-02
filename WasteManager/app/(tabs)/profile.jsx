@@ -21,7 +21,7 @@ const StyledImage = styled(Image);
 const StyledTouchableOpacity = styled(TouchableOpacity);
 const StyledScrollView = styled(ScrollView);
 
-const API_BASE_URL = "http://192.168.232.211:8000";
+const API_BASE_URL = "http://192.168.100.22:8000";
 
 const Profile = () => {
   const { user, isLoading } = useGlobalContext();
@@ -33,7 +33,7 @@ const Profile = () => {
       if (user) {
         try {
           const token = await AsyncStorage.getItem("access_token");
-          const response = await axios.get(`${API_BASE_URL}/bookings/`, {
+          const response = await axios.get(`${API_BASE_URL}/api/bookings/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           console.log("Bookings:", response.data);

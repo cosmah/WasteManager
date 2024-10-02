@@ -11,7 +11,7 @@ const StyledSafeAreaView = styled(SafeAreaView);
 const StyledView = styled(View);
 const StyledText = styled(Text);
 
-const API_BASE_URL = "http://192.168.232.211:8000";
+const API_BASE_URL = "http://192.168.100.22:8000";
 
 const BookingDetails = () => {
   const { id } = useLocalSearchParams();
@@ -24,7 +24,7 @@ const BookingDetails = () => {
       if (user) {
         try {
           const token = await AsyncStorage.getItem("access_token");
-          const response = await axios.get(`${API_BASE_URL}/bookings/${id}/`, {
+          const response = await axios.get(`${API_BASE_URL}/api/bookings/${id}/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           setBooking(response.data);
@@ -84,48 +84,46 @@ const BookingDetails = () => {
       </StyledView>
       <StyledView style={styles.content} className="rounded-xl p-4">
         <ScrollView>
-
-        
-        <StyledView style={styles.bookingText}>
-          <Text style={styles.label}>Phone:</Text>
-          <Text style={styles.value}>{booking.phone}</Text>
-        </StyledView>
-        <StyledView style={styles.bookingText}>
-          <Text style={styles.label}>Address:</Text>
-          <Text style={styles.value}>{booking.address}</Text>
-        </StyledView>
-        <StyledView style={styles.bookingText}>
-          <Text style={styles.label}>Service Type:</Text>
-          <Text style={styles.value}>{booking.service_type}</Text>
-        </StyledView>
-        <StyledView style={styles.bookingText}>
-          <Text style={styles.label}>Service Frequency:</Text>
-          <Text style={styles.value}>{booking.service_frequency}</Text>
-        </StyledView>
-        <StyledView style={styles.bookingText}>
-          <Text style={styles.label}>Waste Type:</Text>
-          <Text style={styles.value}>{booking.waste_type}</Text>
-        </StyledView>
-        <StyledView style={styles.bookingText}>
-          <Text style={styles.label}>Waste Volume:</Text>
-          <Text style={styles.value}>{booking.waste_volume}</Text>
-        </StyledView>
-        <StyledView style={styles.bookingText}>
-          <Text style={styles.label}>Emergency Contact:</Text>
-          <Text style={styles.value}>{booking.emergency_contact}</Text>
-        </StyledView>
-        <StyledView style={styles.bookingText}>
-          <Text style={styles.label}>Date:</Text>
-          <Text style={styles.value}>
-            {new Date(booking.pickup_date).toLocaleDateString()}
-          </Text>
-        </StyledView>
-        <StyledView style={styles.bookingText}>
-          <Text style={styles.label}>Time:</Text>
-          <StyledText style={styles.value}>
-            {formatTime(booking.pickup_time)}
-          </StyledText>
-        </StyledView>
+          <StyledView style={styles.bookingText}>
+            <Text style={styles.label}>Phone:</Text>
+            <Text style={styles.value}>{booking.phone}</Text>
+          </StyledView>
+          <StyledView style={styles.bookingText}>
+            <Text style={styles.label}>Address:</Text>
+            <Text style={styles.value}>{booking.address}</Text>
+          </StyledView>
+          <StyledView style={styles.bookingText}>
+            <Text style={styles.label}>Service Type:</Text>
+            <Text style={styles.value}>{booking.service_type}</Text>
+          </StyledView>
+          <StyledView style={styles.bookingText}>
+            <Text style={styles.label}>Service Frequency:</Text>
+            <Text style={styles.value}>{booking.service_frequency}</Text>
+          </StyledView>
+          <StyledView style={styles.bookingText}>
+            <Text style={styles.label}>Waste Type:</Text>
+            <Text style={styles.value}>{booking.waste_type}</Text>
+          </StyledView>
+          <StyledView style={styles.bookingText}>
+            <Text style={styles.label}>Waste Volume:</Text>
+            <Text style={styles.value}>{booking.waste_volume}</Text>
+          </StyledView>
+          <StyledView style={styles.bookingText}>
+            <Text style={styles.label}>Emergency Contact:</Text>
+            <Text style={styles.value}>{booking.emergency_contact}</Text>
+          </StyledView>
+          <StyledView style={styles.bookingText}>
+            <Text style={styles.label}>Date:</Text>
+            <Text style={styles.value}>
+              {new Date(booking.pickup_date).toLocaleDateString()}
+            </Text>
+          </StyledView>
+          <StyledView style={styles.bookingText}>
+            <Text style={styles.label}>Time:</Text>
+            <StyledText style={styles.value}>
+              {formatTime(booking.pickup_time)}
+            </StyledText>
+          </StyledView>
         </ScrollView>
       </StyledView>
     </StyledSafeAreaView>
@@ -157,7 +155,6 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: "bold",
   },
-
   content: {
     flex: 0.9,
     padding: 20,

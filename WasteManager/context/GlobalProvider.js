@@ -7,7 +7,7 @@ const GlobalContext = createContext();
 
 export const useGlobalContext = () => useContext(GlobalContext);
 
-const API_BASE_URL = 'http://192.168.232.211:8000';
+const API_BASE_URL = 'http://192.168.100.22:8000';
 
 export const GlobalProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -156,7 +156,7 @@ const createBooking = async (bookingData) => {
     }
 
     // Update the URL to match your Django URL configuration
-    const response = await axios.post(`${API_BASE_URL}/bookings/`, bookingData, {
+    const response = await axios.post(`${API_BASE_URL}/api/bookings/`, bookingData, {
       headers: { 
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
