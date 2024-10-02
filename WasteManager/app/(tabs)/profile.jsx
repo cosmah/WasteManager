@@ -24,7 +24,7 @@ const StyledScrollView = styled(ScrollView);
 const API_BASE_URL = "http://192.168.100.22:8000";
 
 const Profile = () => {
-  const { user, isLoading } = useGlobalContext();
+  const { user, isLoading, logout } = useGlobalContext();
   const [bookings, setBookings] = useState([]);
   const router = useRouter();
 
@@ -124,6 +124,16 @@ const Profile = () => {
             )}
           </StyledScrollView>
         </StyledView>
+
+        <StyledTouchableOpacity
+          style={styles.logoutButton}
+          onPress={async () => {
+            await logout();
+            router.push("/sign-in"); // Redirect to login page after logout
+          }}
+        >
+          <StyledText style={styles.logoutButtonText}>Logout</StyledText>
+        </StyledTouchableOpacity>
       </StyledView>
     </StyledSafeAreaView>
   );
@@ -206,6 +216,18 @@ const styles = StyleSheet.create({
     color: "#666",
     textAlign: "center",
     marginTop: 20,
+  },
+  logoutButton: {
+    backgroundColor: "#ff4d4d",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 20,
+  },
+  logoutButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
