@@ -29,6 +29,7 @@ export const GlobalProvider = ({ children }) => {
     const intervalId = setInterval(() => {
         if (isLoggedIn) {
             checkUserSession(); // Recheck session and fetch updated user data
+            fetchWasteData(); // Fetch updated waste data
         }
     }, 5000);
 
