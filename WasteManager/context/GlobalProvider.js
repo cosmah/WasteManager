@@ -24,7 +24,16 @@ export const GlobalProvider = ({ children }) => {
 
   useEffect(() => {
     checkUserSession();
-  }, []);
+    
+    // Polling for real-time updates every 5 seconds (optional)
+    const intervalId = setInterval(() => {
+        if (isLoggedIn) {
+            checkUserSession(); // Recheck session and fetch updated user data
+        }
+    }, 5000);
+
+    return () => clearInterval(intervalId); // Cleanup on unmount
+}, [isLoggedIn]);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -123,29 +132,32 @@ export const GlobalProvider = ({ children }) => {
 
   const loginUser = async (email, password) => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/user/login/`, { 
-        email, 
-        password,
-        username: email // Include if your backend expects it
-      });
-      const { access, refresh, user: userData } = response.data;
-      await AsyncStorage.setItem('access_token', access);
-      await AsyncStorage.setItem('refresh_token', refresh);
-      setUser(userData);
-      setIsLoggedIn(true);
-      return userData;
+        const response = await axios.post(`${API_BASE_URL}/api/user/login/`, { 
+            email, 
+            password,
+            username: email // Include if your backend expects it
+        });
+        const { access, refresh, user: userData } = response.data;
+        await AsyncStorage.setItem('access_token', access);
+        await AsyncStorage.setItem('refresh_token', refresh);
+        setUser(userData);
+        setIsLoggedIn(true);
+        
+        // Fetch current user data immediately after login
+        await fetchCurrentUser(access); // Ensure you use the latest access token
+        return userData;
     } catch (error) {
-      console.error("Login failed:", error);
-      throw error;
+        console.error("Login failed:", error);
+        throw error;
     }
-  };
+};
 
-  const logout = async () => {
-    await AsyncStorage.removeItem('access_token');
-    await AsyncStorage.removeItem('refresh_token');
-    setUser(null);
-    setIsLoggedIn(false);
-  };
+const logout = async () => {
+  await AsyncStorage.removeItem('access_token');
+  await AsyncStorage.removeItem('refresh_token');
+  setUser(null); // Clear user data on logout
+  setIsLoggedIn(false); // Update login state
+};
 
 // Add the createBooking function
 const createBooking = async (bookingData) => {
