@@ -14,7 +14,7 @@ const StyledView = styled(View);
 const StyledText = styled(Text);
 const StyledTouchableOpacity = styled(TouchableOpacity);
 
-const API_BASE_URL = "http://192.168.100.22:8000/";
+const API_BASE_URL = "http://192.168.100.22:8000";
 
 const serviceTypes = [
   { label: "All Types", value: "" },
@@ -39,7 +39,7 @@ const Bookings = () => {
       if (user) {
         try {
           const token = await AsyncStorage.getItem("access_token");
-          const response = await axios.get(`${API_BASE_URL}/bookings/`, {
+          const response = await axios.get(`${API_BASE_URL}/api/bookings/`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           setBookings(response.data);
