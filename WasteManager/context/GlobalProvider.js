@@ -153,6 +153,15 @@ export const GlobalProvider = ({ children }) => {
     }
 };
 
+const requestPasswordReset = async (email) => {
+  try {
+    await axios.post(`${API_BASE_URL}/api/user/password-reset/`, { email });
+  } catch (error) {
+    console.error("Password reset request failed:", error);
+    throw error;
+  }
+};
+
 const logout = async () => {
   await AsyncStorage.removeItem('access_token');
   await AsyncStorage.removeItem('refresh_token');
@@ -197,6 +206,7 @@ return (
     handleTokenRefresh,
     createBooking, // Add createBooking to the context value
     wasteData,
+    requestPasswordReset,
     // notifications,
     //   fetchNotifications,
     //   markNotificationAsRead,

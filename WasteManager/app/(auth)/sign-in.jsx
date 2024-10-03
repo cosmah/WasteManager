@@ -9,7 +9,6 @@ import CustomButtons from "@/components/CustomButtons";
 import { Link, router } from "expo-router";
 import { useGlobalContext } from "@/context/GlobalProvider";
 
-
 const StyledText = styled(Text);
 const SafeAreaViewContainer = styled(SafeAreaView);
 const SImage = styled(Image);
@@ -88,6 +87,12 @@ const SignIn = () => {
             </StyledText>
             <SLink href="/sign-up" className="text-lg font-psemibold text-secondary">
               Sign Up
+            </SLink>
+          </StyledView>
+
+          <StyledView className="justify-center pt-5 flex-row gap-2">
+            <SLink href="/forgot-password" className="text-lg font-psemibold text-secondary">
+              Forgot Password?
             </SLink>
           </StyledView>
         </StyledView>
