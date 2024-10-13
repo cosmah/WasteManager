@@ -3,6 +3,8 @@ from django.contrib import admin
 from django.urls import path, include
 from api.views import CreateUserView, CustomTokenObtainPairView, CurrentUserView, BookingViewSet, WasteDataView
 from rest_framework_simplejwt.views import TokenRefreshView
+from api.views import request_password_reset
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),  # Move admin to /admin/
@@ -18,4 +20,7 @@ urlpatterns = [
 
     # Waste Data URL
     path('api/waste-data/', WasteDataView.as_view(), name='waste_data'),
+
+    path('api/request-password-reset/', request_password_reset, name='request_password_reset'),
+
 ]

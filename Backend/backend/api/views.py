@@ -13,6 +13,11 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import UserSerializer, BookingSerializer
 from .models import Booking
 from django.db.models import Sum
+from django.core.mail import send_mail
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.crypto import get_random_string
+import json
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -129,23 +134,33 @@ class WasteDataView(APIView):
         except User.DoesNotExist:
             return Response({"error": "User with this email does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
-class PasswordResetConfirmView(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request, uidb64, token):
+@csrf_exempt
+def request_password_reset(request):
+    if request.method == 'POST':
         try:
-            uid = force_text(urlsafe_base64_decode(uidb64))
-            user = User.objects.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            user = None
-
-        if user is not None and default_token_generator.check_token(user, token):
-            new_password = request.data.get('new_password')
-            if new_password:
-                user.set_password(new_password)
-                user.save()
-                return Response({"success": "Password has been reset."}, status=status.HTTP_200_OK)
-            else:
-                return Response({"error": "New password is required."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        return Response({"error": "Invalid token or user."}, status=status.HTTP_400_BAD_REQUEST)
+            data = json.loads(request.body)
+            email = data.get('email')
+            if not email:
+                return JsonResponse({'error': 'Email is required'}, status=400)
+            
+            try:
+                user = User.objects.get(email=email)
+                token = get_random_string(length=32)
+                # Save the token in a way that you can validate it later
+                user.profile.reset_token = token
+                user.profile.save()
+                
+                reset_link = f"http://192.168.150.177:8081/reset-password?token={token}"
+                send_mail(
+                    'Password Reset Request',
+                    f'Click the link to reset your password: {reset_link}',
+                    'from@example.com',
+                    [email],
+                    fail_silently=False,
+                )
+                return JsonResponse({'message': 'Password reset link sent to your email'}, status=200)
+            except User.DoesNotExist:
+                return JsonResponse({'error': 'Email not found'}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    return JsonResponse({'error': 'Invalid request'}, status=400)

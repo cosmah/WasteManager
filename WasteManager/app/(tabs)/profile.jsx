@@ -21,7 +21,7 @@ const StyledImage = styled(Image);
 const StyledTouchableOpacity = styled(TouchableOpacity);
 const StyledScrollView = styled(ScrollView);
 
-const API_BASE_URL = "http://192.168.100.22:8000";
+const API_BASE_URL = "http://192.168.150.177:8000";
 
 const Profile = () => {
   const { user, isLoading, logout } = useGlobalContext();

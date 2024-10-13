@@ -5,6 +5,9 @@ import { styled } from "nativewind";
 import FormField from "@/components/FormField";
 import CustomButtons from "@/components/CustomButtons";
 import { useGlobalContext } from "@/context/GlobalProvider";
+import axios from 'axios';
+
+
 
 const StyledText = styled(Text);
 const SafeAreaViewContainer = styled(SafeAreaView);
@@ -25,11 +28,22 @@ const ForgotPassword = () => {
 
     try {
       const trimmedEmail = email.trim();
-      await requestPasswordReset(trimmedEmail);
-      Alert.alert("Success", "Password reset link sent to your email");
+      const response = await axios.post('http://192.168.150.177:8000/api/request-password-reset/', {
+        email: trimmedEmail,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (response.status === 200) {
+        Alert.alert("Success", response.data.message);
+      } else {
+        Alert.alert("Error", response.data.error);
+      }
     } catch (error) {
       console.error("Password reset error:", error);
-      Alert.alert("Error", error.response?.data?.detail || "An error occurred");
+      Alert.alert("Error", "An error occurred");
     } finally {
       setIsSubmitting(false);
     }

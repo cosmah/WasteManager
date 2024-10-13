@@ -37,7 +37,7 @@ const SignUp = () => {
     try {
       console.log("Submitting form:", form); // Log form data
     
-      const response = await axios.post('http://192.168.100.22:8000/api/user/register/', {
+      const response = await axios.post('http://192.168.150.177:8000/api/user/register/', {
         username: form.username,
         email: form.email,
         password: form.password,
