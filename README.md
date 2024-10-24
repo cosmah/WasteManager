@@ -1,10 +1,8 @@
-Based on the retrieved information, here is a comprehensive and descriptive README for the `WasteManager` project:
-
 ---
 
 # WasteManager
 
-WasteManager is a comprehensive solution for managing waste efficiently using a combination of JavaScript, Python, TypeScript, and HTML. This project includes both frontend and backend components to provide a complete waste management system.
+WasteManager is a comprehensive solution for managing waste efficiently using a combination of JavaScript, Python, TypeScript, and Native Wind. This project includes both frontend and backend components to provide a complete waste management system.
 
 ## Table of Contents
 - [Description](#description)
@@ -40,6 +38,7 @@ To install WasteManager, follow these steps:
 - Node.js
 - Python
 - Django
+- React Native
 
 ### Steps
 1. Clone the repository:
@@ -109,8 +108,8 @@ Contributions are welcome! Please follow these steps to contribute:
 This project is licensed under the MIT License. See the LICENSE file for more details.
 
 ## Contact
-For any inquiries or feedback, feel free to reach out to the repository owner [cosmah](https://github.com/cosmah).
+For any inquiries or feedback, feel free to reach out to the repository owner [cosmah](https://github.com/cosmah) on cosmahke4@gmail.com. or at +256760877809. 
 
+ 
 ---
-
-Please review this draft and let me know if there are any specific details or additional sections you would like to include. If you provide more details about the project's features or any existing documentation, I can further refine the README.
+Thank you.
